@@ -1,0 +1,47 @@
+{
+  "name": "auto-assign",
+  "version": "1.0.0",
+  "description": "A Probot app that adds reviewers to pull requests when pull requests are opened.",
+  "author": "Kentaro Matsushita <kentaro.m811@gmail.com>",
+  "license": "ISC",
+  "repository": "https://github.com/kentaro-m/auto-assign.git",
+  "homepage": "https://github.com/kentaro-m/auto-assign",
+  "bugs": "https://github.com/kentaro-m/auto-assign/issues",
+  "keywords": [
+    "probot",
+    "github",
+    "probot-app"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "nodemon --exec \"npm start\"",
+    "start": "npm run build && probot run ./lib/index.js",
+    "lint": "tslint --project test",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
+  },
+  "dependencies": {
+    "probot": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.0",
+    "@types/node": "^10.5.2",
+    "jest": "^22.4.3",
+    "nodemon": "^1.17.2",
+    "smee-client": "^1.0.2",
+    "standard": "^10.0.3",
+    "ts-jest": "^23.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-config-standard": "^7.1.0",
+    "typescript": "^2.9.2"
+  },
+  "engines": {
+    "node": ">= 8.3.0"
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ]
+  }
+}
