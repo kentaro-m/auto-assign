@@ -6,6 +6,7 @@ interface AppConfig {
   addReviewers: boolean,
   addAssignees: boolean,
   reviewers: string[],
+  numberOfReviewers: number,
   skipKeywords?: string[]
 }
 
@@ -33,7 +34,7 @@ export = (app: Application) => {
       return
     }
 
-    const reviewers = createReviewerList(owner, config.reviewers)
+    const reviewers = createReviewerList(owner, config.reviewers, config.numberOfReviewers)
 
     const pullRequest = new PullRequest(context)
 
