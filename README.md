@@ -3,9 +3,11 @@ WIP :construction_worker:
 
 > A GitHub App built with [Probot](https://github.com/probot/probot) that adds reviewers to pull requests when pull requests are opened.
 
+![screenshot](./screenshot.png)
+
 ## Usage
 1. Install the app. 
-2. Create `.github/auto-assign.yml` in your repository.
+2. Create `.github/auto_assign.yml` in your repository.
 
 ```yaml
 # Set to true to add reviewers to pull requests
