@@ -27,7 +27,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
   const title = payload.pull_request.title
 
   if (config.skipKeywords && includesSkipKeywords(title, config.skipKeywords)) {
-    context.log('the process that add reviewers is skipped')
+    context.log('skips adding reviewers')
     return
   }
 
