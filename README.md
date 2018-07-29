@@ -1,5 +1,6 @@
 # Probot: Auto Assign
 [![CircleCI](https://img.shields.io/circleci/project/github/kentaro-m/auto-assign.svg?style=flat-square)](https://circleci.com/gh/kentaro-m/auto-assign)
+[![Coverage Status](https://coveralls.io/repos/github/kentaro-m/auto-assign/badge.svg?branch=master)](https://coveralls.io/github/kentaro-m/auto-assign?branch=master)
 
 
 WIP :construction_worker:
