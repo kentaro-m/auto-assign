@@ -19,5 +19,8 @@ jobs:
           name: run test
           command: npm test
       - run:
+          name: post coverage
+          command: cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
+      - run:
           name: run lint
           command: npm run lint
