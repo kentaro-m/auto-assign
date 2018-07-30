@@ -2,15 +2,12 @@
 [![CircleCI](https://img.shields.io/circleci/project/github/kentaro-m/auto-assign.svg?style=flat-square)](https://circleci.com/gh/kentaro-m/auto-assign)
 [![Coverage Status](https://coveralls.io/repos/github/kentaro-m/auto-assign/badge.svg?branch=master)](https://coveralls.io/github/kentaro-m/auto-assign?branch=master)
 
-
-WIP :construction_worker:
-
 > A GitHub App built with [Probot](https://github.com/probot/probot) that adds reviewers to pull requests when pull requests are opened.
 
 ![screenshot](./screenshot.png)
 
 ## Usage
-1. Install the app. 
+1. [Install the app](https://github.com/apps/auto-assign). 
 2. Create `.github/auto_assign.yml` in your repository.
 
 ```yaml
