@@ -1,5 +1,9 @@
 {
   "extends": [
-    "config:base"
-  ]
+    "config:base",
+    ":timezone(Asia/Tokyo)",
+    ":preserveSemverRanges",
+    ":automergePatch"
+  ],
+  "schedule": "before 9am on Monday"
 }
