@@ -2,9 +2,14 @@
 [![CircleCI](https://img.shields.io/circleci/project/github/kentaro-m/auto-assign.svg?style=flat-square)](https://circleci.com/gh/kentaro-m/auto-assign)
 [![Coverage Status](https://coveralls.io/repos/github/kentaro-m/auto-assign/badge.svg?branch=master)](https://coveralls.io/github/kentaro-m/auto-assign?branch=master)
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) that adds reviewers to pull requests when pull requests are opened.
+> A GitHub App built with [Probot](https://github.com/probot/probot) that adds reviewers/assignees to pull requests when pull requests are opened.
 
-![screenshot](./screenshot.png)
+![screenshot](./public/assets/screenshots/screenshot.png)
+
+## How it works
+* When the pull request is opened, automatically add reviewers/assignees to the pull request.
+* If the number of reviewers is specified, randomly add reviewers/assignees to the pull request. 
+* If the title of the pull request contains a specific keyword, do not add reviewers/assignees to the pull request.
 
 ## Usage
 1. [Install the app](https://github.com/apps/auto-assign). 
@@ -28,8 +33,8 @@ reviewers:
 numberOfReviewers: 0
 
 # A list of keywords to be skipped the process that add reviewers if pull requests include it 
-skipKeywords:
-  - wip
+# skipKeywords:
+#   - wip
 ```
 
 ## Development
