@@ -25,7 +25,7 @@
     "probot": "7.0.1"
   },
   "devDependencies": {
-    "@types/jest": "23.3.0",
+    "@types/jest": "23.3.1",
     "@types/lodash": "4.14.112",
     "@types/node": "10.5.2",
     "coveralls": "3.0.2",
