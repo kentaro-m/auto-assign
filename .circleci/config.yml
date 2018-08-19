@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/workspace
     docker:
-      - image: circleci/node:8.11.3
+      - image: circleci/node:8.11.4
     steps:
       - checkout
       - restore_cache:
