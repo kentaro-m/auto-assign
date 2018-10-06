@@ -1,15 +1,15 @@
 import _ from 'lodash'
 
-export function createReviewerList (owner: string, reviewers: string[], numberOfReviers: number): string[] {
-  const prReviewers = reviewers.filter(
+export function chooseUsers (owner: string, candidates: string[], desiredNumber: number): string[] {
+  const withoutOwner = candidates.filter(
     reviewer => owner !== reviewer
   )
 
-  if (numberOfReviers === 0) {
-    return prReviewers
+  if (desiredNumber === 0) {
+    return withoutOwner
   }
 
-  return _.sampleSize(prReviewers, numberOfReviers)
+  return _.sampleSize(withoutOwner, desiredNumber)
 }
 
 export function includesSkipKeywords (title: string, skipKeywords: string[]): boolean {

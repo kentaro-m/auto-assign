@@ -1,11 +1,13 @@
 import { Context } from 'probot'
 import { PullRequest } from './pull_request'
-import { createReviewerList, includesSkipKeywords } from './util'
+import { chooseUsers, includesSkipKeywords } from './util'
 
 interface AppConfig {
   addReviewers: boolean,
   addAssignees: boolean,
   reviewers: string[],
+  assignees?: string[],
+  numberOfAssignees?: number,
   numberOfReviewers: number,
   skipKeywords?: string[]
 }
@@ -31,7 +33,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
     return
   }
 
-  const reviewers = createReviewerList(owner, config.reviewers, config.numberOfReviewers)
+  const reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
 
   const pullRequest = new PullRequest(context)
 
@@ -43,7 +45,12 @@ export async function handlePullRequest (context: Context): Promise<void> {
   }
 
   if (config.addAssignees) {
-    result = await pullRequest.addAssignees(owner, repo, prNumber, reviewers)
+    const assignees: string[] = config.assignees ?
+      chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
+      :
+      reviewers
+
+    result = await pullRequest.addAssignees(owner, repo, prNumber, assignees)
     context.log(result)
   }
 }
