@@ -124,28 +124,21 @@ describe('handlePullRequest', () => {
       }
     })
 
-    let addedReviewers: string[] = []
-    let addedAssignees: string[] = []
-
     context.github.issues = {
       addAssigneesToIssue: jest.fn().mockImplementation(async (obj) => {
-        addedAssignees = obj.assignees
-        return
+        expect(obj.assignees && obj.assignees[0]).toEqual('assignee1')
       })
     } as any
 
     context.github.pullRequests = {
       createReviewRequest: jest.fn().mockImplementation(async (obj) => {
-        addedReviewers = obj.reviewers
-        return
+        expect(obj.reviewers.length).toEqual(0)
       })
     } as any
 
     await handlePullRequest(context)
 
     expect(spy).toBeCalled()
-    expect(addedAssignees && addedAssignees[0]).toEqual('assignee1')
-    expect(addedReviewers.length).toEqual(0)
   })
 
   test('adds assignees to pull requests using the number of reviewers if no number of assignees exists', async () => {
@@ -162,27 +155,20 @@ describe('handlePullRequest', () => {
       }
     })
 
-    let addedReviewers: string[] = []
-    let addedAssignees: string[] = []
-
     context.github.issues = {
       addAssigneesToIssue: jest.fn().mockImplementation(async (obj) => {
-        addedAssignees = obj.assignees
-        return
+        expect(obj.assignees.length).toEqual(2)
       })
     } as any
 
     context.github.pullRequests = {
       createReviewRequest: jest.fn().mockImplementation(async (obj) => {
-        addedReviewers = obj.reviewers
-        return
+        expect(obj.reviewers.length).toEqual(2)
       })
     } as any
 
     await handlePullRequest(context)
 
     expect(spy).toBeCalled()
-    expect(addedAssignees.length).toEqual(2)
-    expect(addedReviewers.length).toEqual(2)
   })
 })
