@@ -116,7 +116,7 @@ describe('handlePullRequest', () => {
       return {
         addAssignees: true,
         addReviewers: false,
-        assignees: ['assignee1', 'assignee2'],
+        assignees: ['assignee1'], // , 'assignee2'],
         numberOfAssignees: 1,
         numberOfReviewers: 0,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
@@ -124,16 +124,27 @@ describe('handlePullRequest', () => {
       }
     })
 
+    let addedReviewers: string[] = []
+    let addedAssignees: string[] = []
+
     context.github.issues = {
-      addAssigneesToIssue: jest.fn().mockImplementation(async () => ({}))
+      addAssigneesToIssue: jest.fn().mockImplementation(async (obj) => {
+        addedAssignees = obj.assignees
+        return
+      })
     } as any
 
     context.github.pullRequests = {
-      createReviewRequest: jest.fn().mockImplementation(async () => ({}))
+      createReviewRequest: jest.fn().mockImplementation(async (obj) => {
+        addedReviewers = obj.reviewers
+        return
+      })
     } as any
 
     await handlePullRequest(context)
 
     expect(spy).toBeCalled()
+    expect(addedAssignees && addedAssignees[0]).toEqual('assignee1')
+    expect(addedReviewers.length).toEqual(0)
   })
 })
