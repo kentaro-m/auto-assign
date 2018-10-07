@@ -84,8 +84,6 @@ describe('handlePullRequest', () => {
   })
 
   test('adds assignees to pull requests if the configuration is enabled ', async () => {
-    const spy = jest.spyOn(context, 'log')
-
     context.config = jest.fn().mockImplementation(async () => {
       return {
         addAssignees: true,
@@ -97,16 +95,18 @@ describe('handlePullRequest', () => {
     })
 
     context.github.issues = {
-      addAssigneesToIssue: jest.fn().mockImplementation(async () => ({}))
+      addAssigneesToIssue: jest.fn().mockImplementation(async (obj) => {
+        expect(obj.assignees.length).toEqual(3)
+      })
     } as any
 
     context.github.pullRequests = {
-      createReviewRequest: jest.fn().mockImplementation(async () => ({}))
+      createReviewRequest: jest.fn().mockImplementation(async (obj) => {
+        expect(obj.reviewers.length).toEqual(0)
+      })
     } as any
 
     await handlePullRequest(context)
-
-    expect(spy).toBeCalled()
   })
 
   test('adds assignees to pull requests if the assigness are enabled explicitly', async () => {
