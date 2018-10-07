@@ -141,7 +141,7 @@ describe('handlePullRequest', () => {
     expect(spy).toBeCalled()
   })
 
-  test('adds assignees to pull requests using the number of reviewers if no number of assignees exists', async () => {
+  test('adds assignees to pull requests using the numberOfReviewers when numberOfAssignees is unspecified', async () => {
     const spy = jest.spyOn(context, 'log')
 
     context.config = jest.fn().mockImplementation(async () => {
