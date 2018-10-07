@@ -147,4 +147,42 @@ describe('handlePullRequest', () => {
     expect(addedAssignees && addedAssignees[0]).toEqual('assignee1')
     expect(addedReviewers.length).toEqual(0)
   })
+
+  test('adds assignees to pull requests using the number of reviewers if no number of assignees exists', async () => {
+    const spy = jest.spyOn(context, 'log')
+
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: true,
+        addReviewers: true,
+        assignees: ['assignee1', 'assignee2', 'assignee3'],
+        numberOfReviewers: 2,
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+        skipKeywords: ['wip']
+      }
+    })
+
+    let addedReviewers: string[] = []
+    let addedAssignees: string[] = []
+
+    context.github.issues = {
+      addAssigneesToIssue: jest.fn().mockImplementation(async (obj) => {
+        addedAssignees = obj.assignees
+        return
+      })
+    } as any
+
+    context.github.pullRequests = {
+      createReviewRequest: jest.fn().mockImplementation(async (obj) => {
+        addedReviewers = obj.reviewers
+        return
+      })
+    } as any
+
+    await handlePullRequest(context)
+
+    expect(spy).toBeCalled()
+    expect(addedAssignees.length).toEqual(2)
+    expect(addedReviewers.length).toEqual(2)
+  })
 })
