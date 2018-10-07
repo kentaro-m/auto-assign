@@ -57,7 +57,12 @@ npm run build
 
 # Run the bot
 npm start
+
+# Test before submitting a PR
+npm test
 ```
+
+See [Contributing](#contributing) for more information about making improvements to `auto-assign`.
 
 ## Deploy
 
@@ -92,7 +97,7 @@ PRIVATE_KEY_PATH=.data/private-key.pem
 
 ## Contributing
 
-If you have suggestions for how kentaro-m could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
+If you have suggestions for how `auto-assign` could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
 
 For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
