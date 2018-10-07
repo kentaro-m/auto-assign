@@ -1,12 +1,12 @@
-import { createReviewerList, includesSkipKeywords } from '../src/util'
+import { chooseUsers, includesSkipKeywords } from '../src/util'
 
-describe('createReviewerList', () => {
+describe('chooseUsers', () => {
   test('returns the reviewer list without the owner', () => {
     const owner = 'owner'
     const reviewers = ['owner','reviewer1','reviewer2', 'reviewer3']
     const numberOfReviewers = 0
 
-    const list = createReviewerList(owner, reviewers, numberOfReviewers)
+    const list = chooseUsers(owner, reviewers, numberOfReviewers)
 
     expect(list).toEqual(['reviewer1','reviewer2', 'reviewer3'])
   })
@@ -16,7 +16,7 @@ describe('createReviewerList', () => {
     const reviewers = ['owner','reviewer1','reviewer2', 'reviewer3']
     const numberOfReviewers = 2
 
-    const list = createReviewerList(owner, reviewers, numberOfReviewers)
+    const list = chooseUsers(owner, reviewers, numberOfReviewers)
 
     expect(list.length).toEqual(2)
   })
