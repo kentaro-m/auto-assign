@@ -116,7 +116,7 @@ describe('handlePullRequest', () => {
       return {
         addAssignees: true,
         addReviewers: false,
-        assignees: ['assignee1'], // , 'assignee2'],
+        assignees: ['assignee1'],
         numberOfAssignees: 1,
         numberOfReviewers: 0,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
