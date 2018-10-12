@@ -57,9 +57,7 @@ describe('handlePullRequest', () => {
     expect(spy).toBeCalled()
   })
 
-  test('adds reviewers to pull requests if the configuration is enabled ', async () => {
-    const spy = jest.spyOn(context, 'log')
-
+  test('adds reviewers to pull requests if the configuration is enabled, but no assignees', async () => {
     context.config = jest.fn().mockImplementation(async () => {
       return {
         addAssignees: false,
@@ -71,21 +69,21 @@ describe('handlePullRequest', () => {
     })
 
     context.github.issues = {
-      addAssigneesToIssue: jest.fn().mockImplementation(async () => ({}))
+      addAssigneesToIssue: jest.fn().mockImplementation(async (obj) => {
+        expect(obj.assignees.length).toEqual(0)
+      })
     } as any
 
     context.github.pullRequests = {
-      createReviewRequest: jest.fn().mockImplementation(async () => ({}))
+      createReviewRequest: jest.fn().mockImplementation(async (obj) => {
+        expect(obj.reviewers.length).toEqual(3)
+      })
     } as any
 
     await handlePullRequest(context)
-
-    expect(spy).toBeCalled()
   })
 
   test('adds assignees to pull requests if the configuration is enabled ', async () => {
-    const spy = jest.spyOn(context, 'log')
-
     context.config = jest.fn().mockImplementation(async () => {
       return {
         addAssignees: true,
@@ -97,16 +95,18 @@ describe('handlePullRequest', () => {
     })
 
     context.github.issues = {
-      addAssigneesToIssue: jest.fn().mockImplementation(async () => ({}))
+      addAssigneesToIssue: jest.fn().mockImplementation(async (obj) => {
+        expect(obj.assignees.length).toEqual(3)
+      })
     } as any
 
     context.github.pullRequests = {
-      createReviewRequest: jest.fn().mockImplementation(async () => ({}))
+      createReviewRequest: jest.fn().mockImplementation(async (obj) => {
+        expect(obj.reviewers.length).toEqual(0)
+      })
     } as any
 
     await handlePullRequest(context)
-
-    expect(spy).toBeCalled()
   })
 
   test('adds assignees to pull requests if the assigness are enabled explicitly', async () => {
@@ -116,7 +116,7 @@ describe('handlePullRequest', () => {
       return {
         addAssignees: true,
         addReviewers: false,
-        assignees: ['assignee1', 'assignee2'],
+        assignees: ['assignee1'],
         numberOfAssignees: 1,
         numberOfReviewers: 0,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
@@ -125,11 +125,46 @@ describe('handlePullRequest', () => {
     })
 
     context.github.issues = {
-      addAssigneesToIssue: jest.fn().mockImplementation(async () => ({}))
+      addAssigneesToIssue: jest.fn().mockImplementation(async (obj) => {
+        expect(obj.assignees && obj.assignees[0]).toEqual('assignee1')
+      })
     } as any
 
     context.github.pullRequests = {
-      createReviewRequest: jest.fn().mockImplementation(async () => ({}))
+      createReviewRequest: jest.fn().mockImplementation(async (obj) => {
+        expect(obj.reviewers.length).toEqual(0)
+      })
+    } as any
+
+    await handlePullRequest(context)
+
+    expect(spy).toBeCalled()
+  })
+
+  test('adds assignees to pull requests using the numberOfReviewers when numberOfAssignees is unspecified', async () => {
+    const spy = jest.spyOn(context, 'log')
+
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: true,
+        addReviewers: true,
+        assignees: ['assignee1', 'assignee2', 'assignee3'],
+        numberOfReviewers: 2,
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+        skipKeywords: ['wip']
+      }
+    })
+
+    context.github.issues = {
+      addAssigneesToIssue: jest.fn().mockImplementation(async (obj) => {
+        expect(obj.assignees.length).toEqual(2)
+      })
+    } as any
+
+    context.github.pullRequests = {
+      createReviewRequest: jest.fn().mockImplementation(async (obj) => {
+        expect(obj.reviewers.length).toEqual(2)
+      })
     } as any
 
     await handlePullRequest(context)
