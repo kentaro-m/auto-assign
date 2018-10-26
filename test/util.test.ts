@@ -10,6 +10,16 @@ describe('chooseUsers', () => {
 
     expect(list).toEqual(['reviewer1','reviewer2', 'reviewer3'])
   })
+  
+  test('returns the only other reviewer', () => {
+    const owner = 'owner'
+    const reviewers = ['owner','reviewer1']
+    const numberOfReviewers = 1
+
+    const list = chooseUsers(owner, reviewers, numberOfReviewers)
+
+    expect(list).toEqual(['reviewer1'])
+  })
 
   test('returns the reviewer list if the number of reviewers is setted', () => {
     const owner = 'owner'
