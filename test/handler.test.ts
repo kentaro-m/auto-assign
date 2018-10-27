@@ -1,5 +1,6 @@
 import { Context } from 'probot'
 import { handlePullRequest } from '../src/handler'
+import { PullRequest } from '../src/pull_request'
 
 describe('handlePullRequest', () => {
   let event: any
@@ -170,5 +171,67 @@ describe('handlePullRequest', () => {
     await handlePullRequest(context)
 
     expect(spy).toBeCalled()
+  })
+
+  test('adds assignees to pull requests if throws error to add reviewers', async () => {
+    const spy = jest.spyOn(PullRequest.prototype, 'addAssignees')
+
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: true,
+        addReviewers: true,
+        assignees: ['maintainerX', 'maintainerY'],
+        numberOfReviewers: 0,
+        reviewers: ['reviewerA', 'reviewerB'],
+        skipKeywords: ['wip']
+      }
+    })
+
+    context.github.issues = {
+      // tslint:disable-next-line:no-empty
+      addAssigneesToIssue: jest.fn().mockImplementation(async () => {})
+    } as any
+
+    context.github.pullRequests = {
+      createReviewRequest: jest.fn().mockImplementation(async () => {
+        throw new Error('Review cannot be requested from pull request author.')
+      })
+    } as any
+
+    await handlePullRequest(context)
+
+    expect(spy).toBeCalled()
+    expect(spy.mock.calls[0][3]).toHaveLength(2)
+  })
+
+  test('adds reviewers to pull requests if throws error to add assignees', async () => {
+    const spy = jest.spyOn(PullRequest.prototype, 'addReviewers')
+
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: true,
+        addReviewers: true,
+        assignees: ['maintainerX', 'maintainerY'],
+        numberOfReviewers: 0,
+        reviewers: ['reviewerA', 'reviewerB'],
+        skipKeywords: ['wip']
+      }
+    })
+
+    context.github.issues = {
+      addAssigneesToIssue: jest.fn().mockImplementation(async () => {
+        throw new Error('failed to add assignees.')
+      })
+    } as any
+
+    context.github.pullRequests = {
+      // tslint:disable-next-line:no-empty
+      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    } as any
+
+    await handlePullRequest(context)
+
+    expect(spy).toBeCalled()
+    expect(spy.mock.calls[0][3]).toHaveLength(2)
   })
 })

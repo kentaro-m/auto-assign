@@ -40,17 +40,25 @@ export async function handlePullRequest (context: Context): Promise<void> {
   let result: Promise<any>
 
   if (config.addReviewers) {
-    result = await pullRequest.addReviewers(owner, repo, prNumber, reviewers)
-    context.log(result)
+    try {
+      result = await pullRequest.addReviewers(owner, repo, prNumber, reviewers)
+      context.log(result)
+    } catch (error) {
+      context.log(error)
+    }
   }
 
   if (config.addAssignees) {
-    const assignees: string[] = config.assignees ?
-      chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
-      :
-      reviewers
+    try {
+      const assignees: string[] = config.assignees ?
+        chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
+        :
+        reviewers
 
-    result = await pullRequest.addAssignees(owner, repo, prNumber, assignees)
-    context.log(result)
+      result = await pullRequest.addAssignees(owner, repo, prNumber, assignees)
+      context.log(result)
+    } catch (error) {
+      context.log(error)
+    }
   }
 }
