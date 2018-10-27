@@ -10,7 +10,7 @@ describe('chooseUsers', () => {
 
     expect(list).toEqual(['reviewer1','reviewer2', 'reviewer3'])
   })
-  
+
   test('returns the only other reviewer', () => {
     const owner = 'owner'
     const reviewers = ['owner','reviewer1']
