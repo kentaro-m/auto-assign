@@ -9,6 +9,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: update npm cli
+          command: sudo npm install -g npm
+      - run:
           name: install packages
           command: npm install
       - save_cache:
@@ -24,3 +27,6 @@ jobs:
       - run:
           name: run lint
           command: npm run lint
+      - run:
+          name: audit package dependencies
+          command: npm audit
