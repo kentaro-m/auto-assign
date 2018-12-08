@@ -1,5 +1,4 @@
 import { Context } from 'probot'
-import { PullRequest } from './pull_request'
 import { chooseUsers, includesSkipKeywords } from './util'
 
 interface AppConfig {
@@ -23,8 +22,6 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   const payload = context.payload
 
-  const prNumber = payload.number
-  const repo = payload.repository.name
   const owner = payload.repository.owner.login
   const title = payload.pull_request.title
 
@@ -35,13 +32,14 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   const reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
 
-  const pullRequest = new PullRequest(context)
-
   let result: Promise<any>
 
   if (config.addReviewers) {
     try {
-      result = await pullRequest.addReviewers(owner, repo, prNumber, reviewers)
+      const params = context.issue({
+        reviewers
+      })
+      result = await context.github.pullRequests.createReviewRequest(params)
       context.log(result)
     } catch (error) {
       context.log(error)
@@ -55,7 +53,10 @@ export async function handlePullRequest (context: Context): Promise<void> {
         :
         reviewers
 
-      result = await pullRequest.addAssignees(owner, repo, prNumber, assignees)
+      const params = context.issue({
+        assignees
+      })
+      result = await context.github.issues.addAssignees(params)
       context.log(result)
     } catch (error) {
       context.log(error)
