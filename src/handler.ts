@@ -32,7 +32,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   const reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
 
-  let result: Promise<any>
+  let result: any
 
   if (config.addReviewers) {
     try {
