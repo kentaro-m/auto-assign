@@ -30,6 +30,16 @@ describe('chooseUsers', () => {
 
     expect(list.length).toEqual(2)
   })
+
+  test('returns the only owner if if the number of reviewers is one', () => {
+    const owner = 'owner'
+    const reviewers = ['owner']
+    const numberOfReviewers = 0
+
+    const list = chooseUsers(owner, reviewers, numberOfReviewers)
+
+    expect(list.length).toEqual(1)
+  })
 })
 
 describe('includesSkipKeywords', () => {

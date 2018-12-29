@@ -34,7 +34,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   let result: any
 
-  if (config.addReviewers) {
+  if (config.addReviewers && reviewers.length > 0) {
     try {
       const params = context.issue({
         reviewers
@@ -46,7 +46,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
     }
   }
 
-  if (config.addAssignees) {
+  if (config.addAssignees && reviewers.length > 0) {
     try {
       const assignees: string[] = config.assignees ?
         chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)

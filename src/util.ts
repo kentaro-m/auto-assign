@@ -1,10 +1,17 @@
 import _ from 'lodash'
 
 export function chooseUsers (owner: string, candidates: string[], desiredNumber: number): string[] {
+
+  // self-assign
+  if (candidates.length === 1) {
+    return candidates
+  }
+
   const withoutOwner = candidates.filter(
     reviewer => owner !== reviewer
   )
 
+  // all-assign
   if (desiredNumber === 0) {
     return withoutOwner
   }
