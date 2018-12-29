@@ -186,6 +186,35 @@ describe('handlePullRequest', () => {
     expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(/reviewer/)
   })
 
+  test('adds assignees to pull requests if the assigness are only the owner', async () => {
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: true,
+        addReviewers: true,
+        numberOfReviewers: 0,
+        reviewers: ['owner'],
+        skipKeywords: ['wip']
+      }
+    })
+
+    context.github.issues = {
+      // tslint:disable-next-line:no-empty
+      addAssignees: jest.fn().mockImplementation(async () => {})
+    } as any
+
+    context.github.pullRequests = {
+      // tslint:disable-next-line:no-empty
+      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    } as any
+
+    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+
+    await handlePullRequest(context)
+
+    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(1)
+    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/owner/)
+  })
+
   test('adds assignees to pull requests if throws error to add reviewers', async () => {
     context.config = jest.fn().mockImplementation(async () => {
       return {
