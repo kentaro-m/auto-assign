@@ -95,6 +95,21 @@ WEBHOOK_SECRET=development
 PRIVATE_KEY_PATH=.data/private-key.pem
 ```
 
+### GitHub Actions
+Add `.github/main.workflow` to the repository you want to run the app.
+
+```hcl
+workflow "Add reviewers/assignees to Pull Requests" {
+  on = "pull_request"
+  resolves = "Auto Assign"
+}
+
+action "Auto Assign" {
+  uses = "kentaro-m/auto-assign@master"
+  secrets = ["GITHUB_TOKEN"]
+}
+```
+
 ## Contributing
 
 If you have suggestions for how `auto-assign` could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
