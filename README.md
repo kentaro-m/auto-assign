@@ -1,6 +1,7 @@
 # Probot: Auto Assign
 [![CircleCI](https://img.shields.io/circleci/project/github/kentaro-m/auto-assign.svg?style=flat-square)](https://circleci.com/gh/kentaro-m/auto-assign)
 [![Coverage Status](https://coveralls.io/repos/github/kentaro-m/auto-assign/badge.svg?branch=master)](https://coveralls.io/github/kentaro-m/auto-assign?branch=master)
+[![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/auto-assign)
 
 > A GitHub App built with [Probot](https://github.com/probot/probot) that adds reviewers/assignees to pull requests when pull requests are opened.
 
