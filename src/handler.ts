@@ -1,11 +1,15 @@
 import { Context } from 'probot'
-import { chooseUsers, includesSkipKeywords } from './util'
+import { chooseUsers, includesSkipKeywords, selectUsersFromGroups } from './util'
 
 interface AppConfig {
   addReviewers: boolean,
   addAssignees: boolean,
+  useReviewGroups: boolean,
+  useAssigneeGroups: boolean,
   reviewers: string[],
   assignees?: string[],
+  reviewGroups: string[][],
+  assigneeGroups: string[][],
   numberOfAssignees?: number,
   numberOfReviewers: number,
   skipKeywords?: string[]
@@ -30,10 +34,21 @@ export async function handlePullRequest (context: Context): Promise<void> {
     return
   }
 
-  const reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
+  if(config.useReviewGroups && !config.reviewGroups){
+    throw new Error('no review group variable defined in the configuration file');
+    return;
+  }
 
+  if(config.useAssigneeGroups && !config.assigneeGroups){
+    throw new Error('no assignee group variable defined in the configuration file')
+    return;
+  }
+
+  let reviewers = (config.useReviewGroups && config.reviewGroups.length > 0) ?
+    selectUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
+    : chooseUsers(owner, config.reviewers, config.numberOfReviewers)
+  
   let result: any
-
   if (config.addReviewers && reviewers.length > 0) {
     try {
       const params = context.issue({
@@ -48,10 +63,16 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   if (config.addAssignees && reviewers.length > 0) {
     try {
-      const assignees: string[] = config.assignees ?
-        chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
-        :
-        reviewers
+      //DEFINE ASSIGNEES
+      let assignees: string[] = []
+        if(config.useAssigneeGroups && config.assigneeGroups.length > 0) {
+            assignees = selectUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
+
+        } else {
+          assignees = config.assignees ?
+            chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
+            : reviewers;
+        }
 
       const params = context.issue({
         assignees

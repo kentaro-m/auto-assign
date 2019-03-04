@@ -28,3 +28,11 @@ export function includesSkipKeywords (title: string, skipKeywords: string[]): bo
 
   return false
 }
+
+export function selectUsersFromGroups (owner: string, groups: string[][], desiredNumber: number): string[] {
+  let users: string[] = [];
+  for(let group of groups) {
+    users = users.concat(chooseUsers(owner, group, desiredNumber))
+  }
+  return users;
+}

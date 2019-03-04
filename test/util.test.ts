@@ -1,4 +1,4 @@
-import { chooseUsers, includesSkipKeywords } from '../src/util'
+import { chooseUsers, includesSkipKeywords, selectUsersFromGroups } from '../src/util'
 
 describe('chooseUsers', () => {
   test('returns the reviewer list without the owner', () => {
@@ -59,5 +59,111 @@ describe('includesSkipKeywords', () => {
     const contains = includesSkipKeywords(title, skipWords)
 
     expect(contains).toEqual(false)
+  })
+})
+
+describe('selectUsersFromGroups', () => {
+  test('should return one reviewer from each group, excluding the owner', () => {
+    //GIVEN
+    const owner = 'owner'
+    const reviewers = [['owner', 'reviewer1'], ['reviewer2']]
+    const numberOfReviewers = 1
+
+    //WHEN
+    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+
+    //THEN
+    expect(list).toEqual(['reviewer1', 'reviewer2'])
+  })
+
+  test('should return one reviewer from each group, including the owner if the owner is the only member of a group', () => {
+    //GIVEN
+    const owner = 'owner'
+    const reviewers = [['owner'], ['reviewer2']]
+    const numberOfReviewers = 1
+
+    //WHEN
+    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+    
+    //THEN
+    expect(list.length).toEqual(2)
+    expect(list).toEqual(['owner', 'reviewer2'])
+  })
+
+
+test('should randomly select a reviewer from each group', () => {
+    //GIVEN
+    const owner = 'owner'
+    const reviewers = [['owner', 'groupA-1', 'groupA-2'],['groupB-1', 'groupB-2'], [], ['groupD-1', 'groupD-2']]
+    const numberOfReviewers = 1
+
+    //WHEN
+    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+
+    //THEN
+    expect(list.length).toEqual(3)
+    expect(list[0]).toMatch(/groupA/)
+    expect(list[1]).toMatch(/groupB/)
+    expect(list[2]).toMatch(/groupD/)
+  })
+
+
+  test('should return the only other reviewer', () => {
+    //GIVEN
+    const owner = 'owner'
+    const reviewers = [['owner', 'reviewer1'], []]
+    const numberOfReviewers = 1
+
+    //WHEN
+    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+
+    //THEN
+    expect(list.length).toEqual(1)
+    expect(list).toEqual(['reviewer1'])
+  })
+
+
+  test('should return the only other reviewer, even when multiple reviewers are specified', () => {
+    //GIVEN
+    const owner = 'owner'
+    const reviewers = [[],['owner','reviewer1']]
+    const numberOfReviewers = 2
+
+    //WHEN 
+    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+
+    //THEN
+    expect(list.length).toEqual(1)
+    expect(list).toEqual(['reviewer1'])
+  })
+
+
+  test('should self assign the owner', () => {
+    //GIVEN
+    const owner = 'owner'
+    const reviewers = [['owner'],[]]
+    const numberOfReviewers = 1
+
+    //WHEN 
+    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+
+    //THEN
+    expect(list.length).toEqual(1)
+    expect(list).toEqual(['owner'])
+  })
+
+
+  test('should return an empty list', () => {
+    //GIVEN
+    const owner = 'owner'
+    const reviewers = [[],[]]
+    const numberOfReviewers = 2
+
+    //WHEN 
+    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+
+    //THEN
+    expect(list.length).toEqual(0)
+    expect(list).toEqual([])
   })
 })
