@@ -6,6 +6,7 @@ interface AppConfig {
   addAssignees: boolean,
   reviewers: string[],
   assignees?: string[],
+  reviewGroups: string[][],
   numberOfAssignees?: number,
   numberOfReviewers: number,
   skipKeywords?: string[]
@@ -24,6 +25,8 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   const owner = payload.repository.owner.login
   const title = payload.pull_request.title
+
+  context.log(config.reviewGroups)
 
   if (config.skipKeywords && includesSkipKeywords(title, config.skipKeywords)) {
     context.log('skips adding reviewers')
