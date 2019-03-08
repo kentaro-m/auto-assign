@@ -17,9 +17,9 @@ useAssigneeGroups: false
 # A list of reviewers, split into different groups, to be added to pull requests (GitHub user name)
 reviewGroups:
   groupA:
-    - tommy-meacham
+    - user1
   groupB:
-    - ondrej-kocan-ct
+    - user2
 
 # A number of reviewers added to the pull request
 # Set 0 to add all the reviewers (default: 0)
