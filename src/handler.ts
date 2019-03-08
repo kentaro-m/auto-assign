@@ -35,7 +35,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
   }
 
   if(config.useReviewGroups && !config.reviewGroups){
-    throw new Error('no review group variable defined in the configuration file');
+    throw new Error('no review group variable defined in the configuration file')
     return;
   }
 
@@ -67,7 +67,6 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   if (config.addAssignees && (reviewers.length > 0 || Object.keys(config.assigneeGroups).length > 0)) {
     try {
-      //Define Assignees
       let assignees: string[] = []
         if(config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0) {
             console.log(config.assigneeGroups)
