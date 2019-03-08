@@ -18,22 +18,22 @@ reviewers:
 
 # A list of reviewers, split into different groups, to be added to pull requests (GitHub user name)
 reviewGroups:
-  -
+  groupA:
     - reviewerA
     - reviewerB
     - reviewerC
-  -
+  groupB:
     - reviewerD
     - reviewerE
     - reviewerF
 
 # A list of assignees, split into different froups, to be added to pull requests (GitHub user name)
 assigneeGroups:
-  -
+  groupA:
     - assigneeA
     - assigneeB
     - assigneeC
-  -
+  groupB:
     - assigneeD
     - assigneeE
     - assigneeF
