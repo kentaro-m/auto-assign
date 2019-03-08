@@ -45,7 +45,8 @@ export async function handlePullRequest (context: Context): Promise<void> {
   }
 
   let reviewers: string[] = []
-  if(config.useReviewGroups && config.reviewGroups.length > 0) {
+  if(config.useReviewGroups && Object.keys(config.reviewGroups).length > 0) {
+    
     reviewers = selectUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
   } else if(config.reviewers && (config.addReviewers || config.addAssignees)) { 
     reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
@@ -64,11 +65,12 @@ export async function handlePullRequest (context: Context): Promise<void> {
     }
   }
 
-  if (config.addAssignees && (reviewers.length > 0 || config.assigneeGroups.length > 0)) {
+  if (config.addAssignees && (reviewers.length > 0 || Object.keys(config.assigneeGroups).length > 0)) {
     try {
       //Define Assignees
       let assignees: string[] = []
-        if(config.useAssigneeGroups && config.assigneeGroups.length > 0) {
+        if(config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0) {
+            console.log(config.assigneeGroups)
             assignees = selectUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
 
         } else {

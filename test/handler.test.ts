@@ -384,10 +384,10 @@ describe('handlePullRequest', () => {
         addReviewers: true,
         useReviewGroups: true,
         numberOfReviewers: 1,
-        reviewGroups: [
-          ['group1-user1','group1-user2','group1-user3'],
-          ['group2-user1', 'group2-user2','group2-user3']
-        ]
+        reviewGroups: {
+          groupA: ['group1-user1','group1-user2','group1-user3'],
+          groupB: ['group2-user1', 'group2-user2','group2-user3']
+        }
       }
     })
     
@@ -420,10 +420,10 @@ describe('handlePullRequest', () => {
         addReviewers: true,
         useReviewGroups: true,
         numberOfReviewers: 2,
-        reviewGroups: [
-          ['group1-user1','group1-user2','group1-user3'],
-          ['group2-user1']
-        ]
+         reviewGroups: {
+          groupA: ['group1-user1','group1-user2','group1-user3'],
+          groupB: ['group2-user1']
+        }
       }
     })
     
@@ -459,11 +459,11 @@ describe('handlePullRequest', () => {
         numberOfAssignees: 1,
         numberOfReviewers: 2,
         reviewers: ['reviewer1','reviewer2','reviewer3'],
-        assigneeGroups: [
-          ['group1-user1','group1-user2','group1-user3'],
-          ['group2-user1'],
-          ['group3-user1','group3-user2','group3-user3'],
-        ]
+        assigneeGroups: {
+          groupA: ['group1-user1','group1-user2','group1-user3'],
+          groupB: ['group2-user1'],
+          groupC: ['group3-user1','group3-user2','group3-user3']
+        }
       }
     })
     
@@ -498,11 +498,11 @@ describe('handlePullRequest', () => {
         useAssigneeGroups: true,
         numberOfAssignees: 1,
         numberOfReviewers: 2,
-        assigneeGroups: [
-          ['group1-user1','group1-user2','group1-user3'],
-          ['group2-user1'],
-          ['group3-user1','group3-user2','group3-user3'],
-        ]
+        assigneeGroups: {
+          groupA: ['group1-user1','group1-user2','group1-user3'],
+          groupB: ['group2-user1'],
+          groupC: ['group3-user1','group3-user2','group3-user3']
+        }
       }
     })
     
@@ -538,11 +538,11 @@ describe('handlePullRequest', () => {
         numberOfAssignees: 1,
         numberOfReviewers: 2,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
-        assigneeGroups: [
-          ['group1-assignee1','group1-assignee2','group1-assignee3'],
-          ['group2-assignee1'],
-          ['group3-assignee1','group3-assignee2','group3-assignee3'],
-        ]
+         assigneeGroups: {
+          groupA: ['group1-user1','group1-user2','group1-user3'],
+          groupB: ['group2-user1'],
+          groupC: ['group3-user1','group3-user2','group3-user3']
+        }
       }
     })
     
@@ -581,11 +581,11 @@ describe('handlePullRequest', () => {
         numberOfAssignees: 1,
         numberOfReviewers: 2,
         assignees: ['assignee1', 'assignee2', 'assignee3'],
-        reviewGroups: [
-          ['group1-reviewer1','group1-reviewer2','group1-reviewer3'],
-          ['group2-reviewer1'],
-          ['group3-reviewer1','group3-reviewer2','group3-reviewer3'],
-        ]
+        reviewGroups: {
+          groupA: ['group1-reviewer1','group1-reviewer2','group1-reviewer3'],
+          groupB: ['group2-reviewer1'],
+          groupC: ['group3-reviewer1','group3-reviewer2','group3-reviewer3'],
+        }
       }
     })
     
