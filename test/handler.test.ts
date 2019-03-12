@@ -148,7 +148,6 @@ describe('handlePullRequest', () => {
 
     await handlePullRequest(context)
 
-
     expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(1)
     expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/assignee/)
     expect(createReviewRequestSpy).not.toBeCalled()

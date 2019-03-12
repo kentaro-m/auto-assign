@@ -45,8 +45,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
   }
 
   let reviewers: string[] = []
-  if(config.useReviewGroups && Object.keys(config.reviewGroups).length > 0) {
-    
+  if(config.useReviewGroups && Object.keys(config.reviewGroups).length > 0) {   
     reviewers = selectUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
   } else if(config.reviewers && (config.addReviewers || config.addAssignees)) { 
     reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
