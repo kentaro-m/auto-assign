@@ -1,5 +1,5 @@
 import { Context } from 'probot'
-import { chooseUsers, includesSkipKeywords, selectUsersFromGroups } from './util'
+import { chooseUsers, includesSkipKeywords, chooseUsersFromGroups } from './util'
 
 interface AppConfig {
   addReviewers: boolean,
@@ -46,7 +46,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   let reviewers: string[] = []
   if(config.useReviewGroups && Object.keys(config.reviewGroups).length > 0) {   
-    reviewers = selectUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
+    reviewers = chooseUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
   } else if(config.reviewers && (config.addReviewers || config.addAssignees)) { 
     reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
   }
@@ -68,7 +68,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
     try {
       let assignees: string[] = []
       if(config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0) {
-        assignees = selectUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
+        assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
 
       } else {
         assignees = config.assignees ?

@@ -1,4 +1,4 @@
-import { chooseUsers, includesSkipKeywords, selectUsersFromGroups } from '../src/util'
+import { chooseUsers, includesSkipKeywords, chooseUsersFromGroups } from '../src/util'
 
 describe('chooseUsers', () => {
   test('returns the reviewer list without the owner', () => {
@@ -62,7 +62,7 @@ describe('includesSkipKeywords', () => {
   })
 })
 
-describe('selectUsersFromGroups', () => {
+describe('chooseUsersFromGroups', () => {
   test('should return one reviewer from each group, excluding the owner', () => {
     //GIVEN
     const owner = 'owner'
@@ -70,7 +70,7 @@ describe('selectUsersFromGroups', () => {
     const numberOfReviewers = 1
 
     //WHEN
-    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+    const list = chooseUsersFromGroups(owner, reviewers, numberOfReviewers)
 
     //THEN
     expect(list).toEqual(['reviewer1', 'reviewer2'])
@@ -83,7 +83,7 @@ describe('selectUsersFromGroups', () => {
     const numberOfReviewers = 1
 
     //WHEN
-    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+    const list = chooseUsersFromGroups(owner, reviewers, numberOfReviewers)
     
     //THEN
     expect(list.length).toEqual(2)
@@ -98,7 +98,7 @@ test('should randomly select a reviewer from each group', () => {
     const numberOfReviewers = 1
 
     //WHEN
-    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+    const list = chooseUsersFromGroups(owner, reviewers, numberOfReviewers)
 
     //THEN
     expect(list.length).toEqual(3)
@@ -115,7 +115,7 @@ test('should randomly select a reviewer from each group', () => {
     const numberOfReviewers = 1
 
     //WHEN
-    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+    const list = chooseUsersFromGroups(owner, reviewers, numberOfReviewers)
 
     //THEN
     expect(list.length).toEqual(1)
@@ -130,7 +130,7 @@ test('should randomly select a reviewer from each group', () => {
     const numberOfReviewers = 2
 
     //WHEN 
-    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+    const list = chooseUsersFromGroups(owner, reviewers, numberOfReviewers)
 
     //THEN
     expect(list.length).toEqual(1)
@@ -145,7 +145,7 @@ test('should randomly select a reviewer from each group', () => {
     const numberOfReviewers = 1
 
     //WHEN 
-    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+    const list = chooseUsersFromGroups(owner, reviewers, numberOfReviewers)
 
     //THEN
     expect(list.length).toEqual(1)
@@ -160,7 +160,7 @@ test('should randomly select a reviewer from each group', () => {
     const numberOfReviewers = 2
 
     //WHEN 
-    const list = selectUsersFromGroups(owner, reviewers, numberOfReviewers)
+    const list = chooseUsersFromGroups(owner, reviewers, numberOfReviewers)
 
     //THEN
     expect(list.length).toEqual(0)
