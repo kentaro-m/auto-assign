@@ -67,21 +67,22 @@ export async function handlePullRequest (context: Context): Promise<void> {
   if (config.addAssignees && (reviewers.length > 0 || Object.keys(config.assigneeGroups).length > 0)) {
     try {
       let assignees: string[] = []
-        if(config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0) {
-            console.log(config.assigneeGroups)
-            assignees = selectUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
+      if(config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0) {
+        console.log(config.assigneeGroups)
+        assignees = selectUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
 
-        } else {
-          assignees = config.assignees ?
-            chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
-            : reviewers;
-        }
+      } else {
+        assignees = config.assignees ?
+          chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
+          : reviewers;
+      }
 
       const params = context.issue({
         assignees
       })
       result = await context.github.issues.addAssignees(params)
       context.log(result)
+
     } catch (error) {
       context.log(error)
     }
