@@ -69,18 +69,18 @@ export async function chooseAssignees(context: Context, config:AppConfig, review
 
   let isWithGroups: boolean = config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
   let hasReviewers: boolean = reviewers.length > 0
-  
-  if (hasReviewers || isWithGroups) {
-    try {
-      let assignees: string[] = []
-      if(isWithGroups) {
-        assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
-      } else {
-        assignees = config.assignees ?
-          chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
-          : reviewers
-      }
 
+  if (hasReviewers || isWithGroups) {
+    let assignees: string[] = []
+    if(isWithGroups) {
+      assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
+    } else {
+      assignees = config.assignees ?
+        chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
+        : reviewers
+    }
+    
+    try {
       const params = context.issue({assignees})
       let result: any = await context.github.issues.addAssignees(params)
       context.log(result)
