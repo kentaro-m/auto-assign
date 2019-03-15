@@ -75,11 +75,13 @@ export async function chooseReviewers(context: Context, config: AppConfig, revie
 
 export async function chooseAssignees(context: Context, config:AppConfig, reviewers: string[], owner: string) {
   let result: any
+  let ableToAddAssigneesWithoutGroups: boolean = config.addAssignees && (reviewers.length > 0)
+  let ableToAddAssigneesWithGroups: boolean = config.addAssignees && config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
 
-  if (config.addAssignees && (reviewers.length > 0 || Object.keys(config.assigneeGroups).length > 0)) {
+  if (ableToAddAssigneesWithoutGroups || ableToAddAssigneesWithGroups) {
     try {
       let assignees: string[] = []
-      if(config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0) {
+      if(ableToAddAssigneesWithGroups) {
         assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
 
       } else {
