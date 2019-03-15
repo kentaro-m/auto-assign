@@ -28,12 +28,12 @@ export async function handlePullRequest (context: Context): Promise<void> {
   }
 
   if(config.useReviewGroups && !config.reviewGroups){
-    throw new Error('no review group variable defined in the configuration file')
+    throw new Error('Error in configuration file to do with using review groups. Expected \'reviewGroups\' variable to be set because the variable \'useReviewGroups\' = true.')
     return
   }
 
   if(config.useAssigneeGroups && !config.assigneeGroups){
-    throw new Error('no assignee group variable defined in the configuration file')
+    throw new Error('Error in configuration file to do with using review groups. Expected \'assigneeGroups\' variable to be set because the variable \'useAssigneeGroups\' = true.')
     return
   }
 

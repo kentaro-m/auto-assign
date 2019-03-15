@@ -309,7 +309,7 @@ describe('handlePullRequest', () => {
 
       } catch (error) {
         //THEN
-        expect(error).toEqual(new Error('no review group variable defined in the configuration file'));
+        expect(error).toEqual(new Error('Error in configuration file to do with using review groups. Expected \'reviewGroups\' variable to be set because the variable \'useReviewGroups\' = true.'));
       }
     });
 
@@ -327,7 +327,7 @@ describe('handlePullRequest', () => {
 
       } catch (error) {
         //THEN
-        expect(error).toEqual(new Error('no assignee group variable defined in the configuration file'));
+        expect(error).toEqual(new Error('Error in configuration file to do with using review groups. Expected \'assigneeGroups\' variable to be set because the variable \'useAssigneeGroups\' = true.'));
       }
     });
 
