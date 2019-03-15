@@ -45,9 +45,9 @@ export async function handlePullRequest (context: Context): Promise<void> {
 export async function chooseReviewers(context: Context, config: AppConfig, reviewers: string[], owner: string) {
   if(!config.reviewers && !config.reviewGroups) return []
 
-  let isWithGroups: boolean = config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
+  let useGroups: boolean = config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
 
-  if(isWithGroups) {   
+  if(useGroups) {   
     reviewers = chooseUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
   } else { 
     reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
@@ -68,11 +68,11 @@ export async function chooseReviewers(context: Context, config: AppConfig, revie
 export async function chooseAssignees(context: Context, config:AppConfig, reviewers: string[], owner: string) {
   if(!config.addAssignees) return
 
-  let isWithGroups: boolean = config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
+  let useGroups: boolean = config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
   let hasReviewers: boolean = reviewers.length > 0
   let assignees: string[] = []
   
-  if(isWithGroups) {
+  if(useGroups) {
     assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
   } else if(hasReviewers) {
     assignees = config.assignees ?
