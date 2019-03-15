@@ -29,12 +29,12 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   if(config.useReviewGroups && !config.reviewGroups){
     throw new Error('no review group variable defined in the configuration file')
-    return;
+    return
   }
 
   if(config.useAssigneeGroups && !config.assigneeGroups){
     throw new Error('no assignee group variable defined in the configuration file')
-    return;
+    return
   }
 
   let reviewers: string[] = []
@@ -77,7 +77,7 @@ export async function chooseAssignees(context: Context, config:AppConfig, review
       } else {
         assignees = config.assignees ?
           chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
-          : reviewers;
+          : reviewers
       }
 
       const params = context.issue({assignees})
