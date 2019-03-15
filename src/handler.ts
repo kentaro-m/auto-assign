@@ -41,9 +41,8 @@ export async function handlePullRequest (context: Context): Promise<void> {
   }
 
   let reviewers: string[] = []
-  const owner = payload.repository.owner.login
-  reviewers = await chooseReviewers(context, config, reviewers, owner)
-  await chooseAssignees(context, config, reviewers, owner)
+  reviewers = await chooseReviewers(context, config, reviewers, payload.repository.owner.login)
+  await chooseAssignees(context, config, reviewers, payload.repository.owner.login)
 }
 
 
