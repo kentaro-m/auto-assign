@@ -69,12 +69,11 @@ export async function chooseAssignees(context: Context, config:AppConfig, review
   if(!config.addAssignees) return
 
   let useGroups: boolean = config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
-  let hasReviewers: boolean = reviewers.length > 0
   let assignees: string[] = []
   
   if(useGroups) {
     assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
-  } else if(hasReviewers) {
+  } else if(reviewers.length > 0) {
     assignees = config.assignees ?
       chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
       : reviewers
