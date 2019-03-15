@@ -57,13 +57,12 @@ export async function chooseReviewers(context: Context, config: AppConfig, revie
     reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
   }
   
-  let result: any
   if (config.addReviewers && reviewers.length > 0) {
     try {
       const params = context.issue({
         reviewers
       })
-      result = await context.github.pullRequests.createReviewRequest(params)
+      let result: any = await context.github.pullRequests.createReviewRequest(params)
       context.log(result)
     } catch (error) {
       context.log(error)
@@ -73,7 +72,6 @@ export async function chooseReviewers(context: Context, config: AppConfig, revie
 }
 
 export async function chooseAssignees(context: Context, config:AppConfig, reviewers: string[], owner: string) {
-  let result: any
   let ableToAddAssigneesWithoutGroups: boolean = config.addAssignees && (reviewers.length > 0)
   let ableToAddAssigneesWithGroups: boolean = config.addAssignees && config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
 
@@ -92,7 +90,7 @@ export async function chooseAssignees(context: Context, config:AppConfig, review
       const params = context.issue({
         assignees
       })
-      result = await context.github.issues.addAssignees(params)
+      let result: any = await context.github.issues.addAssignees(params)
       context.log(result)
 
     } catch (error) {
