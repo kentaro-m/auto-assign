@@ -43,12 +43,12 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
 
 export async function chooseReviewers(context: Context, config: AppConfig, reviewers: string[], owner: string) {
-  let ableToAddReviewersWithGroups: boolean = config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
-  let ableToAddReviewersWithoutGroups: boolean = config.reviewers && (config.addReviewers || config.addAssignees)
+  let isWithGroups: boolean = config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
+  let isWithoutGroups: boolean = config.reviewers && (config.addReviewers || config.addAssignees)
 
-  if(ableToAddReviewersWithGroups) {   
+  if(isWithGroups) {   
     reviewers = chooseUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
-  } else if(ableToAddReviewersWithoutGroups) { 
+  } else if(isWithoutGroups) { 
     reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
   }
   
@@ -65,13 +65,13 @@ export async function chooseReviewers(context: Context, config: AppConfig, revie
 }
 
 export async function chooseAssignees(context: Context, config:AppConfig, reviewers: string[], owner: string) {
-  let ableToAddAssigneesWithoutGroups: boolean = config.addAssignees && (reviewers.length > 0)
-  let ableToAddAssigneesWithGroups: boolean = config.addAssignees && config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
+  let isWithGroups: boolean = config.addAssignees && config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
+  let isWithoutGroups: boolean = config.addAssignees && (reviewers.length > 0)
 
-  if (ableToAddAssigneesWithoutGroups || ableToAddAssigneesWithGroups) {
+  if (isWithoutGroups || isWithGroups) {
     try {
       let assignees: string[] = []
-      if(ableToAddAssigneesWithGroups) {
+      if(isWithGroups) {
         assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
       } else {
         assignees = config.assignees ?
