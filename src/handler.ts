@@ -25,8 +25,6 @@ export async function handlePullRequest (context: Context): Promise<void> {
   }
 
   const payload = context.payload
-
-  const owner = payload.repository.owner.login
   const title = payload.pull_request.title
 
   if (config.skipKeywords && includesSkipKeywords(title, config.skipKeywords)) {
@@ -44,7 +42,9 @@ export async function handlePullRequest (context: Context): Promise<void> {
     return;
   }
 
+  const owner = payload.repository.owner.login
   let reviewers: string[] = []
+
   reviewers = await chooseReviewers(context, config, reviewers, owner)
   await chooseAssignees(context, config, reviewers, owner)
   
