@@ -4,15 +4,15 @@ import { chooseUsers, includesSkipKeywords, chooseUsersFromGroups } from './util
 interface AppConfig {
   addReviewers: boolean,
   addAssignees: boolean,
-  useReviewGroups: boolean,
-  useAssigneeGroups: boolean,
   reviewers: string[],
   assignees?: string[],
-  reviewGroups: string[][],
-  assigneeGroups: string[][],
   numberOfAssignees?: number,
   numberOfReviewers: number,
-  skipKeywords?: string[]
+  skipKeywords?: string[],
+  useReviewGroups: boolean,
+  useAssigneeGroups: boolean,
+  reviewGroups: string[][],
+  assigneeGroups: string[][]
 }
 
 export async function handlePullRequest (context: Context): Promise<void> {
