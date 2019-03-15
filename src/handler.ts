@@ -1,5 +1,5 @@
 import { Context } from 'probot'
-import { chooseUsers, includesSkipKeywords } from './util'
+import { chooseUsers, includesSkipKeywords, chooseUsersFromGroups } from './util'
 
 interface AppConfig {
   addReviewers: boolean,
@@ -8,55 +8,81 @@ interface AppConfig {
   assignees?: string[],
   numberOfAssignees?: number,
   numberOfReviewers: number,
-  skipKeywords?: string[]
+  skipKeywords?: string[],
+  useReviewGroups: boolean,
+  useAssigneeGroups: boolean,
+  reviewGroups: string[][],
+  assigneeGroups: string[][]
 }
 
 export async function handlePullRequest (context: Context): Promise<void> {
-  let config: AppConfig | null
-
-  config = await context.config<AppConfig | null>('auto_assign.yml')
-
+  let config: AppConfig | null = await context.config<AppConfig | null>('auto_assign.yml')
   if (!config) {
     throw new Error('the configuration file failed to load')
   }
 
-  const payload = context.payload
-
-  const owner = payload.repository.owner.login
-  const title = payload.pull_request.title
-
+  const title = context.payload.pull_request.title
   if (config.skipKeywords && includesSkipKeywords(title, config.skipKeywords)) {
     context.log('skips adding reviewers')
     return
   }
 
-  const reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
+  if(config.useReviewGroups && !config.reviewGroups){
+    throw new Error('Error in configuration file to do with using review groups. Expected \'reviewGroups\' variable to be set because the variable \'useReviewGroups\' = true.')
+    return
+  }
 
-  let result: any
+  if(config.useAssigneeGroups && !config.assigneeGroups){
+    throw new Error('Error in configuration file to do with using review groups. Expected \'assigneeGroups\' variable to be set because the variable \'useAssigneeGroups\' = true.')
+    return
+  }
 
-  if (config.addReviewers && reviewers.length > 0) {
+  const reviewers: string[] = await chooseReviewers(context, config, [], context.payload.repository.owner.login)
+  await chooseAssignees(context, config, reviewers, context.payload.repository.owner.login)
+}
+
+
+export async function chooseReviewers(context: Context, config: AppConfig, reviewers: string[], owner: string) {
+  if(!config.reviewers && !config.reviewGroups) return []
+
+  let useGroups: boolean = config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
+
+  if(useGroups) {   
+    reviewers = chooseUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
+  } else { 
+    reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
+  }
+  
+  if (config.addReviewers && reviewers) {
     try {
-      const params = context.issue({
-        reviewers
-      })
-      result = await context.github.pullRequests.createReviewRequest(params)
+      const params = context.issue({reviewers})
+      let result: any = await context.github.pullRequests.createReviewRequest(params)
       context.log(result)
     } catch (error) {
       context.log(error)
     }
   }
+  return reviewers
+}
 
-  if (config.addAssignees && reviewers.length > 0) {
+export async function chooseAssignees(context: Context, config:AppConfig, reviewers: string[], owner: string) {
+  if(!config.addAssignees) return
+
+  let assignees: string[] = []
+  let useGroups: boolean = config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
+  
+  if(useGroups) {
+    assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
+  } else if(reviewers.length > 0) {
+    assignees = config.assignees ?
+      chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
+      : reviewers
+  }
+
+  if (assignees) {  
     try {
-      const assignees: string[] = config.assignees ?
-        chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
-        :
-        reviewers
-
-      const params = context.issue({
-        assignees
-      })
-      result = await context.github.issues.addAssignees(params)
+      const params = context.issue({assignees})
+      let result: any = await context.github.issues.addAssignees(params)
       context.log(result)
     } catch (error) {
       context.log(error)
