@@ -19,14 +19,12 @@ export async function handlePullRequest (context: Context): Promise<void> {
   let config: AppConfig | null
 
   config = await context.config<AppConfig | null>('auto_assign.yml')
-
   if (!config) {
     throw new Error('the configuration file failed to load')
   }
 
   const payload = context.payload
   const title = payload.pull_request.title
-
   if (config.skipKeywords && includesSkipKeywords(title, config.skipKeywords)) {
     context.log('skips adding reviewers')
     return
@@ -42,12 +40,10 @@ export async function handlePullRequest (context: Context): Promise<void> {
     return;
   }
 
-  const owner = payload.repository.owner.login
   let reviewers: string[] = []
-
+  const owner = payload.repository.owner.login
   reviewers = await chooseReviewers(context, config, reviewers, owner)
   await chooseAssignees(context, config, reviewers, owner)
-  
 }
 
 
