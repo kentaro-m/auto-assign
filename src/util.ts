@@ -34,5 +34,5 @@ export function chooseUsersFromGroups (owner: string, groups: string[][], desire
   for(var group in groups) {
     users = users.concat(chooseUsers(owner, groups[group], desiredNumber))
   }
-  return users;
+  return users
 }
