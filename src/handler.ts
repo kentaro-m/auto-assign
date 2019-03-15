@@ -59,9 +59,7 @@ export async function chooseReviewers(context: Context, config: AppConfig, revie
   
   if (config.addReviewers && reviewers.length > 0) {
     try {
-      const params = context.issue({
-        reviewers
-      })
+      const params = context.issue({reviewers})
       let result: any = await context.github.pullRequests.createReviewRequest(params)
       context.log(result)
     } catch (error) {
@@ -80,19 +78,15 @@ export async function chooseAssignees(context: Context, config:AppConfig, review
       let assignees: string[] = []
       if(ableToAddAssigneesWithGroups) {
         assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
-
       } else {
         assignees = config.assignees ?
           chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
           : reviewers;
       }
 
-      const params = context.issue({
-        assignees
-      })
+      const params = context.issue({assignees})
       let result: any = await context.github.issues.addAssignees(params)
       context.log(result)
-
     } catch (error) {
       context.log(error)
     }
