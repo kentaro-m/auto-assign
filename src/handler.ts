@@ -21,8 +21,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
     throw new Error('the configuration file failed to load')
   }
 
-  const payload = context.payload
-  const title = payload.pull_request.title
+  const title = context.payload.pull_request.title
   if (config.skipKeywords && includesSkipKeywords(title, config.skipKeywords)) {
     context.log('skips adding reviewers')
     return
@@ -39,8 +38,8 @@ export async function handlePullRequest (context: Context): Promise<void> {
   }
 
   let reviewers: string[] = []
-  reviewers = await chooseReviewers(context, config, reviewers, payload.repository.owner.login)
-  await chooseAssignees(context, config, reviewers, payload.repository.owner.login)
+  reviewers = await chooseReviewers(context, config, reviewers, context.payload.repository.owner.login)
+  await chooseAssignees(context, config, reviewers, context.payload.repository.owner.login)
 }
 
 
