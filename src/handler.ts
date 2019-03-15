@@ -43,8 +43,10 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
 
 export async function chooseReviewers(context: Context, config: AppConfig, reviewers: string[], owner: string) {
+  if(!config.reviewers && !config.reviewGroups) return []
+
   let isWithGroups: boolean = config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
-  let isWithoutGroups: boolean = config.reviewers && (config.addReviewers || config.addAssignees)
+  let isWithoutGroups: boolean = (config.addReviewers || config.addAssignees)
 
   if(isWithGroups) {   
     reviewers = chooseUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
@@ -52,7 +54,7 @@ export async function chooseReviewers(context: Context, config: AppConfig, revie
     reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
   }
   
-  if (config.addReviewers && reviewers.length > 0) {
+  if (config.addReviewers && reviewers) {
     try {
       const params = context.issue({reviewers})
       let result: any = await context.github.pullRequests.createReviewRequest(params)
