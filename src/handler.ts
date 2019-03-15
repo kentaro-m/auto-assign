@@ -46,11 +46,10 @@ export async function chooseReviewers(context: Context, config: AppConfig, revie
   if(!config.reviewers && !config.reviewGroups) return []
 
   let isWithGroups: boolean = config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
-  let isWithoutGroups: boolean = (config.addReviewers || config.addAssignees)
 
   if(isWithGroups) {   
     reviewers = chooseUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
-  } else if(isWithoutGroups) { 
+  } else { 
     reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
   }
   
