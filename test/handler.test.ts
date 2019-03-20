@@ -21,6 +21,9 @@ describe('handlePullRequest', () => {
           owner: {
             login: 'kentaro-m'
           }
+        },
+        sender: {
+          login: 'testUser'
         }
       }
     }
@@ -32,7 +35,7 @@ describe('handlePullRequest', () => {
         addAssignees: true,
         addReviewers: true,
         numberOfReviewers: 0,
-        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3', 'testUser'],
         skipKeywords: ['wip']
       }
     })
@@ -95,7 +98,7 @@ describe('handlePullRequest', () => {
         addAssignees: true,
         addReviewers: false,
         numberOfReviewers: 0,
-        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3', 'testUser'],
         skipKeywords: ['wip']
       }
     })
@@ -128,7 +131,7 @@ describe('handlePullRequest', () => {
         assignees: ['assignee1'],
         numberOfAssignees: 1,
         numberOfReviewers: 0,
-        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3', 'testUser'],
         skipKeywords: ['wip']
       }
     })
@@ -160,7 +163,7 @@ describe('handlePullRequest', () => {
         addReviewers: true,
         assignees: ['assignee1', 'assignee2', 'assignee3'],
         numberOfReviewers: 2,
-        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3', 'testUser'],
         skipKeywords: ['wip']
       }
     })

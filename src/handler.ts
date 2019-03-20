@@ -24,13 +24,19 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   const owner = payload.repository.owner.login
   const title = payload.pull_request.title
+  const sender = payload.sender.login
 
   if (config.skipKeywords && includesSkipKeywords(title, config.skipKeywords)) {
     context.log('skips adding reviewers')
     return
   }
 
-  const reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
+  const reviewers = chooseUsers(
+    owner,
+    sender,
+    config.reviewers,
+    config.numberOfReviewers
+  )
 
   let result: any
 
@@ -48,10 +54,14 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   if (config.addAssignees && reviewers.length > 0) {
     try {
-      const assignees: string[] = config.assignees ?
-        chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
-        :
-        reviewers
+      const assignees: string[] = config.assignees
+        ? chooseUsers(
+            owner,
+            '',
+            config.assignees,
+            config.numberOfAssignees || config.numberOfReviewers
+          )
+        : reviewers
 
       const params = context.issue({
         assignees

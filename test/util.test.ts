@@ -3,40 +3,44 @@ import { chooseUsers, includesSkipKeywords } from '../src/util'
 describe('chooseUsers', () => {
   test('returns the reviewer list without the owner', () => {
     const owner = 'owner'
-    const reviewers = ['owner','reviewer1','reviewer2', 'reviewer3']
+    const sender = 'sender'
+    const reviewers = ['owner','reviewer1','reviewer2', 'reviewer3', 'sender']
     const numberOfReviewers = 0
 
-    const list = chooseUsers(owner, reviewers, numberOfReviewers)
+    const list = chooseUsers(owner, sender, reviewers, numberOfReviewers)
 
     expect(list).toEqual(['reviewer1','reviewer2', 'reviewer3'])
   })
 
   test('returns the only other reviewer', () => {
     const owner = 'owner'
+    const sender = 'sender'
     const reviewers = ['owner','reviewer1']
     const numberOfReviewers = 1
 
-    const list = chooseUsers(owner, reviewers, numberOfReviewers)
+    const list = chooseUsers(owner, sender, reviewers, numberOfReviewers)
 
     expect(list).toEqual(['reviewer1'])
   })
 
   test('returns the reviewer list if the number of reviewers is setted', () => {
     const owner = 'owner'
-    const reviewers = ['owner','reviewer1','reviewer2', 'reviewer3']
+    const sender = 'sender'
+    const reviewers = ['owner','reviewer1','reviewer2', 'reviewer3', 'sender']
     const numberOfReviewers = 2
 
-    const list = chooseUsers(owner, reviewers, numberOfReviewers)
+    const list = chooseUsers(owner, sender, reviewers, numberOfReviewers)
 
     expect(list.length).toEqual(2)
   })
 
   test('returns the only owner if if the number of reviewers is one', () => {
     const owner = 'owner'
+    const sender = 'sender'
     const reviewers = ['owner']
     const numberOfReviewers = 0
 
-    const list = chooseUsers(owner, reviewers, numberOfReviewers)
+    const list = chooseUsers(owner, sender, reviewers, numberOfReviewers)
 
     expect(list.length).toEqual(1)
   })
