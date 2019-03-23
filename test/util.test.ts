@@ -66,7 +66,15 @@ describe('chooseUsersFromGroups', () => {
   test('should return one reviewer from each group, excluding the owner', () => {
     // GIVEN
     const owner = 'owner'
-    const reviewers = [['owner', 'reviewer1'], ['reviewer2']]
+    const reviewers = {
+      groupA: [
+        'owner',
+        'reviewer1'
+      ],
+      groupB: [
+        'reviewer2'
+      ]
+    }
     const numberOfReviewers = 1
 
     // WHEN
@@ -79,7 +87,14 @@ describe('chooseUsersFromGroups', () => {
   test('should return one reviewer from each group, including the owner if the owner is the only member of a group', () => {
     // GIVEN
     const owner = 'owner'
-    const reviewers = [['owner'], ['reviewer2']]
+    const reviewers = {
+      groupA: [
+        'owner'
+      ],
+      groupB: [
+        'reviewer2'
+      ]
+    }
     const numberOfReviewers = 1
 
     // WHEN
@@ -93,7 +108,22 @@ describe('chooseUsersFromGroups', () => {
   test('should randomly select a reviewer from each group', () => {
     // GIVEN
   const owner = 'owner'
-  const reviewers = [['owner', 'groupA-1', 'groupA-2'],['groupB-1', 'groupB-2'], [], ['groupD-1', 'groupD-2']]
+  const reviewers = {
+    groupA: [
+      'owner',
+      'groupA-1',
+      'groupA-2'
+    ],
+    groupB: [
+      'groupB-1',
+      'groupB-2'
+    ],
+    groupC: [],
+    groupD: [
+      'groupD-1',
+      'groupD-2'
+    ]
+  }
   const numberOfReviewers = 1
 
     // WHEN
@@ -109,7 +139,13 @@ describe('chooseUsersFromGroups', () => {
   test('should return the only other reviewer', () => {
     // GIVEN
     const owner = 'owner'
-    const reviewers = [['owner', 'reviewer1'], []]
+    const reviewers = {
+      groupA: [
+        'owner',
+        'reviewer1'
+      ],
+      groupB: []
+    }
     const numberOfReviewers = 1
 
     // WHEN
@@ -123,7 +159,14 @@ describe('chooseUsersFromGroups', () => {
   test('should return the only other reviewer, even when multiple reviewers are specified', () => {
     // GIVEN
     const owner = 'owner'
-    const reviewers = [[],['owner','reviewer1']]
+    const reviewers = {
+      groupA: [],
+      groupB: [
+        'owner',
+        'reviewer1'
+      ]
+    }
+
     const numberOfReviewers = 2
 
     // WHEN
@@ -137,7 +180,10 @@ describe('chooseUsersFromGroups', () => {
   test('should self assign the owner', () => {
     // GIVEN
     const owner = 'owner'
-    const reviewers = [['owner'],[]]
+    const reviewers = {
+      groupA: ['owner'],
+      groupB: []
+    }
     const numberOfReviewers = 1
 
     // WHEN
@@ -151,7 +197,10 @@ describe('chooseUsersFromGroups', () => {
   test('should return an empty list', () => {
     // GIVEN
     const owner = 'owner'
-    const reviewers = [[],[]]
+    const reviewers = {
+      groupA: [],
+      groupB: []
+    }
     const numberOfReviewers = 2
 
     // WHEN
