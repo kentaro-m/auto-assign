@@ -10,10 +10,10 @@ interface AppConfig {
   numberOfAssignees?: number,
   numberOfReviewers: number,
   skipKeywords?: string[],
-  useReviewGroups: boolean,
-  useAssigneeGroups: boolean,
-  reviewGroups: string[][],
-  assigneeGroups: string[][]
+  useReviewGroups?: boolean,
+  useAssigneeGroups?: boolean,
+  reviewGroups?: { [key: string]: string[] } | undefined,
+  assigneeGroups?: { [key: string]: string[] } | undefined
 }
 
 export async function handlePullRequest (context: Context): Promise<void> {

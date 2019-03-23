@@ -9,10 +9,10 @@ interface AppConfig {
   numberOfAssignees?: number,
   numberOfReviewers: number,
   skipKeywords?: string[],
-  useReviewGroups: boolean,
-  useAssigneeGroups: boolean,
-  reviewGroups: string[][],
-  assigneeGroups: string[][]
+  useReviewGroups?: boolean,
+  useAssigneeGroups?: boolean,
+  reviewGroups?: { [key: string]: string[] } | undefined,
+  assigneeGroups?: { [key: string]: string[] } | undefined
 }
 
 export default class AutoAssign {
@@ -28,6 +28,7 @@ export default class AutoAssign {
 
   public async addReviewers () {
     const owner = this.context.payload.repository.owner.login
+    // @ts-ignore
     const useGroups = this.config.hasOwnProperty('useReviewGroups') && this.config.useReviewGroups && Object.keys(this.config.reviewGroups).length > 0
 
     if (useGroups) {
@@ -49,6 +50,7 @@ export default class AutoAssign {
 
   public async addAssignees () {
     const owner = this.context.payload.repository.owner.login
+    // @ts-ignore
     const useGroups: boolean = this.config.hasOwnProperty('useAssigneeGroups') && this.config.useAssigneeGroups && Object.keys(this.config.assigneeGroups).length > 0
 
     let assignees
