@@ -1,26 +1,23 @@
 import _ from 'lodash'
 
 export function chooseUsers (
-  owner: string,
-  sender: string,
   candidates: string[],
-  desiredNumber: number
+  desiredNumber: number,
+  filterUser: string = ''
 ): string[] {
-  // self-assign
-  if (candidates.length === 1) {
-    return candidates
-  }
 
-  const withoutOwnerAndSender = candidates.filter(
-    reviewer => owner !== reviewer && sender !== reviewer
+  const filteredCandidates = candidates.filter(
+    reviewer => {
+      return reviewer !== filterUser
+    }
   )
 
   // all-assign
   if (desiredNumber === 0) {
-    return withoutOwnerAndSender
+    return filteredCandidates
   }
 
-  return _.sampleSize(withoutOwnerAndSender, desiredNumber)
+  return _.sampleSize(filteredCandidates, desiredNumber)
 }
 
 export function includesSkipKeywords (title: string, skipKeywords: string[]): boolean {
