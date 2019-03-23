@@ -1,5 +1,6 @@
+import AutoAssign from './auto_assign'
+import { includesSkipKeywords } from './util'
 import { Context } from 'probot'
-import { chooseUsers, chooseUsersFromGroups, includesSkipKeywords } from './util'
 
 interface AppConfig {
   addReviewers: boolean,
@@ -37,54 +38,14 @@ export async function handlePullRequest (context: Context): Promise<void> {
     return
   }
 
-  const reviewers: string[] = await chooseReviewers(context, config, [], context.payload.repository.owner.login)
-  await chooseAssignees(context, config, reviewers, context.payload.repository.owner.login)
-}
+  // @ts-ignore
+  const autoAssign = new AutoAssign(context, config)
 
-export async function chooseReviewers (context: Context, config: AppConfig, reviewers: string[], owner: string) {
-  if (!config.reviewers && !config.reviewGroups) return []
-
-  const useGroups: boolean = config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
-
-  if (useGroups) {
-    reviewers = chooseUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
-  } else {
-    reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
+  if (config.addReviewers) {
+    await autoAssign.addReviewers()
   }
 
-  if (config.addReviewers && reviewers) {
-    try {
-      const params = context.issue({ reviewers })
-      const result: any = await context.github.pullRequests.createReviewRequest(params)
-      context.log(result)
-    } catch (error) {
-      context.log(error)
-    }
-  }
-  return reviewers
-}
-
-export async function chooseAssignees (context: Context, config: AppConfig, reviewers: string[], owner: string) {
-  if (!config.addAssignees) return
-
-  let assignees: string[] = []
-  const useGroups: boolean = config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
-
-  if (useGroups) {
-    assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
-  } else if (reviewers.length > 0) {
-    assignees = config.assignees ?
-      chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
-      : reviewers
-  }
-
-  if (assignees) {
-    try {
-      const params = context.issue({ assignees })
-      const result: any = await context.github.issues.addAssignees(params)
-      context.log(result)
-    } catch (error) {
-      context.log(error)
-    }
+  if (config.addAssignees) {
+    await autoAssign.addAssignees()
   }
 }
