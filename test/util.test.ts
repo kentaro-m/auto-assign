@@ -13,7 +13,7 @@ describe('chooseUsers', () => {
 
   test('returns the only other reviewer', () => {
     const prCreator = 'pr-creator'
-    const reviewers = ['reviewer1']
+    const reviewers = ['reviewer1', 'pr-creator']
     const numberOfReviewers = 1
 
     const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
