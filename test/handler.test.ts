@@ -98,7 +98,7 @@ describe('handlePullRequest', () => {
     )
   })
 
-  test('adds assignees to pull requests if the configuration is enabled ', async () => {
+  test('adds reviewers to assignees to pull requests if the configuration is enabled ', async () => {
     context.config = jest.fn().mockImplementation(async () => {
       return {
         addAssignees: true,
@@ -127,10 +127,10 @@ describe('handlePullRequest', () => {
 
     await handlePullRequest(context)
 
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(4)
+    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(3)
     expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/reviewer/)
     expect(addAssigneesSpy.mock.calls[0][0].assignees).toEqual(expect.arrayContaining([
-      'reviewer1', 'reviewer2', 'reviewer3', 'pr-creator'
+      'reviewer1', 'reviewer2', 'reviewer3'
     ]))
     expect(createReviewRequestSpy).not.toBeCalled()
   })
@@ -209,7 +209,7 @@ describe('handlePullRequest', () => {
     )
   })
 
-  test('adds assignees to pull requests if the assigness are only the pr creator', async () => {
+  test("doesn't add assignees if the reviewers contain only a pr creator and assignees are not explicit", async () => {
     context.config = jest.fn().mockImplementation(async () => {
       return {
         addAssignees: true,
@@ -238,8 +238,7 @@ describe('handlePullRequest', () => {
 
     await handlePullRequest(context)
 
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(1)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/pr-creator/)
+    expect(addAssigneesSpy).not.toHaveBeenCalled()
     expect(createReviewRequestSpy).not.toHaveBeenCalled()
   })
 

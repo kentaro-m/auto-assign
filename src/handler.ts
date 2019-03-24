@@ -50,10 +50,10 @@ export async function handlePullRequest (context: Context): Promise<void> {
     }
   }
 
-  const assignees: string[] = chooseUsers(
-    config.assignees || config.reviewers,
+  const assignees: string[] = config.assignees ? chooseUsers(
+    config.assignees,
     config.numberOfAssignees || config.numberOfReviewers
-  )
+  ) : reviewers
 
   if (config.addAssignees && assignees.length > 0) {
     try {
