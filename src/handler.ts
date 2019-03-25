@@ -33,7 +33,6 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   if(config.useAssigneeGroups && !config.assigneeGroups){
     throw new Error('Error in configuration file to do with using review groups. Expected \'assigneeGroups\' variable to be set because the variable \'useAssigneeGroups\' = true.')
-    return
   }
 
   const reviewers: string[] = await chooseReviewers(context, config, [], context.payload.repository.owner.login)
