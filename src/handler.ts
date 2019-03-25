@@ -29,7 +29,6 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   if(config.useReviewGroups && !config.reviewGroups){
     throw new Error('Error in configuration file to do with using review groups. Expected \'reviewGroups\' variable to be set because the variable \'useReviewGroups\' = true.')
-    return
   }
 
   if(config.useAssigneeGroups && !config.assigneeGroups){
