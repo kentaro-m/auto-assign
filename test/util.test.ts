@@ -87,7 +87,14 @@ describe('chooseUsersFromGroups', () => {
   test('should return one reviewer from each group, including the owner if the owner is the only member of a group', () => {
     //GIVEN
     const owner = 'owner'
-    const reviewers = [['owner'], ['reviewer2']]
+     const reviewers = {
+      groupA: [
+        'owner'
+      ],
+      groupB: [
+        'reviewer2'
+      ]
+    }
     const numberOfReviewers = 1
 
     //WHEN
