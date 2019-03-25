@@ -68,6 +68,7 @@ export async function chooseAssignees(context: Context, config:AppConfig, review
   if(!config.addAssignees) return
 
   let assignees: string[] = []
+  // @ts-ignore
   let useGroups: boolean = config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
   
   if(useGroups) {
