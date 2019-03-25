@@ -109,7 +109,22 @@ describe('chooseUsersFromGroups', () => {
 test('should randomly select a reviewer from each group', () => {
     //GIVEN
     const owner = 'owner'
-    const reviewers = [['owner', 'groupA-1', 'groupA-2'],['groupB-1', 'groupB-2'], [], ['groupD-1', 'groupD-2']]
+    const reviewers = {
+    groupA: [
+      'owner',
+      'groupA-1',
+      'groupA-2'
+    ],
+    groupB: [
+      'groupB-1',
+      'groupB-2'
+    ],
+    groupC: [],
+    groupD: [
+      'groupD-1',
+      'groupD-2'
+    ]
+  }
     const numberOfReviewers = 1
 
     //WHEN
