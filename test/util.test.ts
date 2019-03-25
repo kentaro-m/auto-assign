@@ -183,7 +183,10 @@ test('should randomly select a reviewer from each group', () => {
   test('should self assign the owner', () => {
     //GIVEN
     const owner = 'owner'
-    const reviewers = [['owner'],[]]
+    const reviewers = {
+      groupA: ['owner'],
+      groupB: []
+    }
     const numberOfReviewers = 1
 
     //WHEN 
