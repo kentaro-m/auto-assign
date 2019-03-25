@@ -201,7 +201,10 @@ test('should randomly select a reviewer from each group', () => {
   test('should return an empty list', () => {
     //GIVEN
     const owner = 'owner'
-    const reviewers = [[],[]]
+    const reviewers = {
+      groupA: [],
+      groupB: []
+    }
     const numberOfReviewers = 2
 
     //WHEN 
