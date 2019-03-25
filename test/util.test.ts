@@ -66,7 +66,15 @@ describe('chooseUsersFromGroups', () => {
   test('should return one reviewer from each group, excluding the owner', () => {
     //GIVEN
     const owner = 'owner'
-    const reviewers = [['owner', 'reviewer1'], ['reviewer2']]
+    const reviewers = {
+      groupA: [
+        'owner',
+        'reviewer1'
+      ],
+      groupB: [
+        'reviewer2'
+      ]
+    }
     const numberOfReviewers = 1
 
     //WHEN
