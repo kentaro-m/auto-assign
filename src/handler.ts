@@ -45,6 +45,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
 export async function chooseReviewers(context: Context, config: AppConfig, reviewers: string[], owner: string) {
   if(!config.reviewers && !config.reviewGroups) return []
 
+  // @ts-ignore
   let useGroups: boolean = config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
 
   if(useGroups) {   
