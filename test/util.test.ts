@@ -141,7 +141,13 @@ test('should randomly select a reviewer from each group', () => {
   test('should return the only other reviewer', () => {
     //GIVEN
     const owner = 'owner'
-    const reviewers = [['owner', 'reviewer1'], []]
+    const reviewers = {
+      groupA: [
+        'owner',
+        'reviewer1'
+      ],
+      groupB: []
+    }
     const numberOfReviewers = 1
 
     //WHEN
