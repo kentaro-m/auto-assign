@@ -22,7 +22,7 @@ export async function handlePullRequest (context: Context): Promise<void> {
 
   const payload = context.payload
 
-  const owner = payload.repository.owner.login
+  const prCreator = payload.pull_request.user.login
   const title = payload.pull_request.title
 
   if (config.skipKeywords && includesSkipKeywords(title, config.skipKeywords)) {
@@ -30,7 +30,11 @@ export async function handlePullRequest (context: Context): Promise<void> {
     return
   }
 
-  const reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
+  const reviewers = chooseUsers(
+    config.reviewers,
+    config.numberOfReviewers,
+    prCreator
+  )
 
   let result: any
 
@@ -46,16 +50,14 @@ export async function handlePullRequest (context: Context): Promise<void> {
     }
   }
 
-  if (config.addAssignees && reviewers.length > 0) {
-    try {
-      const assignees: string[] = config.assignees ?
-        chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
-        :
-        reviewers
+  const assignees: string[] = config.assignees ? chooseUsers(
+    config.assignees,
+    config.numberOfAssignees || config.numberOfReviewers
+  ) : reviewers
 
-      const params = context.issue({
-        assignees
-      })
+  if (config.addAssignees && assignees.length > 0) {
+    try {
+      const params = context.issue({ assignees })
       result = await context.github.issues.addAssignees(params)
       context.log(result)
     } catch (error) {

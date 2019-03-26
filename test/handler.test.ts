@@ -14,7 +14,10 @@ describe('handlePullRequest', () => {
         number: '1',
         pull_request: {
           number: '1',
-          title: 'test'
+          title: 'test',
+          user: {
+            login: 'pr-creator'
+          }
         },
         repository: {
           name: 'auto-assign',
@@ -36,6 +39,7 @@ describe('handlePullRequest', () => {
         skipKeywords: ['wip']
       }
     })
+
     context.log = jest.fn() as any
   })
 
@@ -64,7 +68,7 @@ describe('handlePullRequest', () => {
         addAssignees: false,
         addReviewers: true,
         numberOfReviewers: 0,
-        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3', 'pr-creator'],
         skipKeywords: ['wip']
       }
     })
@@ -80,22 +84,27 @@ describe('handlePullRequest', () => {
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(
+      context.github.pullRequests,
+      'createReviewRequest'
+    )
 
     await handlePullRequest(context)
 
     expect(addAssigneesSpy).not.toBeCalled()
     expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(3)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(/reviewer/)
+    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(
+      /reviewer/
+    )
   })
 
-  test('adds assignees to pull requests if the configuration is enabled ', async () => {
+  test('adds reviewers to assignees to pull requests if the configuration is enabled ', async () => {
     context.config = jest.fn().mockImplementation(async () => {
       return {
         addAssignees: true,
         addReviewers: false,
         numberOfReviewers: 0,
-        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3', 'pr-creator'],
         skipKeywords: ['wip']
       }
     })
@@ -111,12 +120,18 @@ describe('handlePullRequest', () => {
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(
+      context.github.pullRequests,
+      'createReviewRequest'
+    )
 
     await handlePullRequest(context)
 
     expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(3)
     expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/reviewer/)
+    expect(addAssigneesSpy.mock.calls[0][0].assignees).toEqual(expect.arrayContaining([
+      'reviewer1', 'reviewer2', 'reviewer3'
+    ]))
     expect(createReviewRequestSpy).not.toBeCalled()
   })
 
@@ -125,8 +140,8 @@ describe('handlePullRequest', () => {
       return {
         addAssignees: true,
         addReviewers: false,
-        assignees: ['assignee1'],
-        numberOfAssignees: 1,
+        assignees: ['assignee1', 'pr-creator'],
+        numberOfAssignees: 2,
         numberOfReviewers: 0,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
         skipKeywords: ['wip']
@@ -144,12 +159,15 @@ describe('handlePullRequest', () => {
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(
+      context.github.pullRequests,
+      'createReviewRequest'
+    )
 
     await handlePullRequest(context)
 
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(1)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/assignee/)
+    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(2)
+    expect(addAssigneesSpy.mock.calls[0][0].assignees).toEqual(expect.arrayContaining(['assignee1', 'pr-creator']))
     expect(createReviewRequestSpy).not.toBeCalled()
   })
 
@@ -176,23 +194,28 @@ describe('handlePullRequest', () => {
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(
+      context.github.pullRequests,
+      'createReviewRequest'
+    )
 
     await handlePullRequest(context)
 
     expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(2)
     expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/assignee/)
     expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(2)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(/reviewer/)
+    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(
+      /reviewer/
+    )
   })
 
-  test('adds assignees to pull requests if the assigness are only the owner', async () => {
+  test("doesn't add assignees if the reviewers contain only a pr creator and assignees are not explicit", async () => {
     context.config = jest.fn().mockImplementation(async () => {
       return {
         addAssignees: true,
         addReviewers: true,
         numberOfReviewers: 0,
-        reviewers: ['owner'],
+        reviewers: ['pr-creator'],
         skipKeywords: ['wip']
       }
     })
@@ -208,11 +231,15 @@ describe('handlePullRequest', () => {
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const createReviewRequestSpy = jest.spyOn(
+      context.github.pullRequests,
+      'createReviewRequest'
+    )
 
     await handlePullRequest(context)
 
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(1)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/owner/)
+    expect(addAssigneesSpy).not.toHaveBeenCalled()
+    expect(createReviewRequestSpy).not.toHaveBeenCalled()
   })
 
   test('adds assignees to pull requests if throws error to add reviewers', async () => {
