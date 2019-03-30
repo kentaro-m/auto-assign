@@ -17,7 +17,8 @@
     "dev": "nodemon --exec \"npm start\"",
     "start": "npm run build && probot run ./lib/index.js",
     "lint": "tslint --project test",
-    "test": "jest --coverage",
+    "test": "jest",
+    "coverage": "jest --coverage",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
