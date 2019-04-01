@@ -1,44 +1,53 @@
 import { chooseUsers, includesSkipKeywords, chooseUsersFromGroups } from '../src/util'
 
 describe('chooseUsers', () => {
-  test('returns the reviewer list without the owner', () => {
-    const owner = 'owner'
-    const reviewers = ['owner','reviewer1','reviewer2', 'reviewer3']
+  test('returns the reviewer list without the PR creator', () => {
+    const prCreator = 'pr-creator'
+    const reviewers = ['reviewer1','reviewer2', 'reviewer3', 'pr-creator']
     const numberOfReviewers = 0
 
-    const list = chooseUsers(owner, reviewers, numberOfReviewers)
+    const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
 
     expect(list).toEqual(['reviewer1','reviewer2', 'reviewer3'])
   })
 
   test('returns the only other reviewer', () => {
-    const owner = 'owner'
-    const reviewers = ['owner','reviewer1']
+    const prCreator = 'pr-creator'
+    const reviewers = ['reviewer1', 'pr-creator']
     const numberOfReviewers = 1
 
-    const list = chooseUsers(owner, reviewers, numberOfReviewers)
+    const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
 
     expect(list).toEqual(['reviewer1'])
   })
 
   test('returns the reviewer list if the number of reviewers is setted', () => {
-    const owner = 'owner'
-    const reviewers = ['owner','reviewer1','reviewer2', 'reviewer3']
+    const prCreator = 'pr-creator'
+    const reviewers = ['reviewer1','reviewer2', 'reviewer3', 'pr-creator']
     const numberOfReviewers = 2
 
-    const list = chooseUsers(owner, reviewers, numberOfReviewers)
+    const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
 
     expect(list.length).toEqual(2)
   })
 
-  test('returns the only owner if if the number of reviewers is one', () => {
-    const owner = 'owner'
-    const reviewers = ['owner']
+  test('returns empty array if the reviewer is the PR creator', () => {
+    const prCreator = 'pr-creator'
+    const reviewers = ['pr-creator']
     const numberOfReviewers = 0
 
-    const list = chooseUsers(owner, reviewers, numberOfReviewers)
+    const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
 
-    expect(list.length).toEqual(1)
+    expect(list.length).toEqual(0)
+  })
+
+  test('returns full reviewer array if not passing the user to filter out', () => {
+    const reviewers = ['pr-creator']
+    const numberOfReviewers = 0
+
+    const list = chooseUsers(reviewers, numberOfReviewers)
+
+    expect(list).toEqual(expect.arrayContaining(['pr-creator']))
   })
 })
 
