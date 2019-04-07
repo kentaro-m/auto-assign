@@ -35,8 +35,8 @@ export async function handlePullRequest (context: Context): Promise<void> {
     throw new Error('Error in configuration file to do with using review groups. Expected \'assigneeGroups\' variable to be set because the variable \'useAssigneeGroups\' = true.')
   }
 
-  const reviewers: string[] = await chooseReviewers(context, config, [], context.payload.repository.owner.login)
-  await chooseAssignees(context, config, reviewers, context.payload.repository.owner.login)
+  const reviewers: string[] = await chooseReviewers(context, config, [], context.payload.pull_request.user.login)
+  await chooseAssignees(context, config, reviewers, context.payload.pull_request.user.login)
 }
 
 
@@ -49,10 +49,10 @@ export async function chooseReviewers(context: Context, config: AppConfig, revie
   if(useGroups) {   
     reviewers = chooseUsersFromGroups(owner, config.reviewGroups, config.numberOfReviewers)
   } else { 
-    reviewers = chooseUsers(owner, config.reviewers, config.numberOfReviewers)
+    reviewers = chooseUsers(config.reviewers, config.numberOfReviewers, owner)
   }
   
-  if (config.addReviewers && reviewers) {
+  if (config.addReviewers && reviewers.length > 0) {
     try {
       const params = context.issue({reviewers})
       let result: any = await context.github.pullRequests.createReviewRequest(params)
@@ -75,11 +75,11 @@ export async function chooseAssignees(context: Context, config:AppConfig, review
     assignees = chooseUsersFromGroups(owner, config.assigneeGroups, config.numberOfAssignees || config.numberOfReviewers)
   } else if(reviewers.length > 0) {
     assignees = config.assignees ?
-      chooseUsers(owner, config.assignees, config.numberOfAssignees || config.numberOfReviewers)
+      chooseUsers(config.assignees, config.numberOfAssignees || config.numberOfReviewers, owner)
       : reviewers
   }
 
-  if (assignees) {  
+  if (assignees.length > 0) {
     try {
       const params = context.issue({assignees})
       let result: any = await context.github.issues.addAssignees(params)

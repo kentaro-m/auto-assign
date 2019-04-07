@@ -110,8 +110,8 @@ describe('chooseUsersFromGroups', () => {
     const list = chooseUsersFromGroups(owner, reviewers, numberOfReviewers)
     
     //THEN
-    expect(list.length).toEqual(2)
-    expect(list).toEqual(['owner', 'reviewer2'])
+    expect(list.length).toEqual(1)
+    expect(list).toEqual(['reviewer2'])
   })
 
 
@@ -187,25 +187,6 @@ test('should randomly select a reviewer from each group', () => {
     expect(list.length).toEqual(1)
     expect(list).toEqual(['reviewer1'])
   })
-
-
-  test('should self assign the owner', () => {
-    //GIVEN
-    const owner = 'owner'
-    const reviewers = {
-      groupA: ['owner'],
-      groupB: []
-    }
-    const numberOfReviewers = 1
-
-    //WHEN 
-    const list = chooseUsersFromGroups(owner, reviewers, numberOfReviewers)
-
-    //THEN
-    expect(list.length).toEqual(1)
-    expect(list).toEqual(['owner'])
-  })
-
 
   test('should return an empty list', () => {
     //GIVEN

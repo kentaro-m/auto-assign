@@ -166,8 +166,8 @@ describe('handlePullRequest', () => {
 
     await handlePullRequest(context)
 
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(2)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toEqual(expect.arrayContaining(['assignee1', 'pr-creator']))
+    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(1)
+    expect(addAssigneesSpy.mock.calls[0][0].assignees).toEqual(expect.arrayContaining(['assignee1']))
     expect(createReviewRequestSpy).not.toBeCalled()
   })
 
