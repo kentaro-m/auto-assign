@@ -10,6 +10,7 @@
 ## How it works
 * When the pull request is opened, automatically add reviewers/assignees to the pull request.
 * If the number of reviewers is specified, randomly add reviewers/assignees to the pull request.
+* If reviewers/assignees are separated into groups in the config file, randomply select the number of reviewers from each group.
 * If the title of the pull request contains a specific keyword, do not add reviewers/assignees to the pull request.
 
 ## Usage
@@ -41,6 +42,34 @@ numberOfReviewers: 0
 # Set to 0 to add all of the assignees.
 # Uses numberOfReviewers if unset.
 # numberOfAssignees: 2
+
+# Set to true to add reviewers from different groups to pull requests
+useReviewGroups: true
+
+# A list of reviewers, split into different groups, to be added to pull requests (GitHub user name)
+reviewGroups:
+  groupA:
+    - reviewerA
+    - reviewerB
+    - reviewerC
+  groupB:
+    - reviewerD
+    - reviewerE
+    - reviewerF
+
+# Set to true to add assignees from different groups to pull requests
+useAssigneeGroups: false
+
+# A list of assignees, split into different froups, to be added to pull requests (GitHub user name)
+# assigneeGroups:
+#   groupA:
+#     - assigneeA
+#     - assigneeB
+#     - assigneeC
+#   groupB:
+#     - assigneeD
+#     - assigneeE
+#     - assigneeF
 
 # A list of keywords to be skipped the process that add reviewers if pull requests include it
 # skipKeywords:
