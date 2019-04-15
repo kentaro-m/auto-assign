@@ -32,8 +32,8 @@ export function includesSkipKeywords (title: string, skipKeywords: string[]): bo
 
 export function chooseUsersFromGroups (owner: string, groups: { [key: string]: string[] } | undefined, desiredNumber: number): string[] {
   let users: string[] = []
-  for(var group in groups) {
-    users = users.concat(chooseUsers(owner, groups[group], desiredNumber))
+  for (const group in groups) {
+    users = users.concat(chooseUsers(groups[group], desiredNumber, owner))
   }
   return users
 }
