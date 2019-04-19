@@ -16,7 +16,7 @@
     "build": "tsc -p tsconfig.json",
     "dev": "nodemon --exec \"npm start\"",
     "start": "npm run build && probot run ./lib/index.js",
-    "lint": "tslint --project test",
+    "lint": "eslint src/**/*.ts",
     "test": "jest",
     "coverage": "jest --coverage",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
@@ -30,7 +30,10 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.0",
+    "@typescript-eslint/eslint-plugin": "^1.6.0",
+    "@typescript-eslint/parser": "^1.6.0",
     "coveralls": "^3.0.2",
+    "eslint": "^5.16.0",
     "jest": "^24.1.0",
     "nodemon": "^1.17.2",
     "smee-client": "^1.0.2",
