@@ -27,12 +27,9 @@ export async function chooseReviewers(
 ): Promise<string[]> {
   if (!config.reviewers && !config.reviewGroups) return []
 
-  // @ts-ignore
   const useGroups: boolean =
     config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
 
-  // TODO: Fix code based on rule: prefer-conditional-expression
-  // @see https://palantir.github.io/tslint/rules/prefer-conditional-expression/
   if (useGroups) {
     reviewers = chooseUsersFromGroups(
       owner,
@@ -66,7 +63,7 @@ export async function chooseAssignees(
   if (!config.addAssignees) return
 
   let assignees: string[] = []
-  // @ts-ignore
+
   const useGroups: boolean =
     config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
 
