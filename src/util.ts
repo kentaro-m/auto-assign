@@ -1,13 +1,12 @@
 import _ from 'lodash'
 
-export function chooseUsers (
+export function chooseUsers(
   candidates: string[],
   desiredNumber: number,
   filterUser: string = ''
 ): string[] {
-
   const filteredCandidates = candidates.filter(
-    reviewer => {
+    (reviewer: string): boolean => {
       return reviewer !== filterUser
     }
   )
@@ -20,7 +19,10 @@ export function chooseUsers (
   return _.sampleSize(filteredCandidates, desiredNumber)
 }
 
-export function includesSkipKeywords (title: string, skipKeywords: string[]): boolean {
+export function includesSkipKeywords(
+  title: string,
+  skipKeywords: string[]
+): boolean {
   for (const skipKeyword of skipKeywords) {
     if (title.toLowerCase().includes(skipKeyword.toLowerCase()) === true) {
       return true
@@ -30,7 +32,11 @@ export function includesSkipKeywords (title: string, skipKeywords: string[]): bo
   return false
 }
 
-export function chooseUsersFromGroups (owner: string, groups: { [key: string]: string[] } | undefined, desiredNumber: number): string[] {
+export function chooseUsersFromGroups(
+  owner: string,
+  groups: { [key: string]: string[] } | undefined,
+  desiredNumber: number
+): string[] {
   let users: string[] = []
   for (const group in groups) {
     users = users.concat(chooseUsers(groups[group], desiredNumber, owner))
