@@ -17,10 +17,23 @@
     "dev": "nodemon --exec \"npm start\"",
     "start": "npm run build && probot run ./lib/index.js",
     "lint": "eslint src/**/*.ts",
-    "prettier": "prettier src/**/*.ts --write",
     "test": "jest",
+    "precommit": "lint-staged",
     "coverage": "jest --coverage",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "src/**/*.ts": [
+        "npm run lint -- --fix",
+        "git add"
+      ]
+    }
   },
   "dependencies": {
     "@types/lodash": "^4.14.119",
@@ -37,7 +50,9 @@
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
+    "husky": "^1.3.1",
     "jest": "^24.1.0",
+    "lint-staged": "^8.1.5",
     "nodemon": "^1.17.2",
     "prettier": "^1.17.0",
     "smee-client": "^1.0.2",
