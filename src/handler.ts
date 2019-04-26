@@ -1,9 +1,6 @@
 import { Context } from 'probot'
-import {
-  chooseUsers,
-  chooseUsersFromGroups,
-  includesSkipKeywords
-} from './util'
+import AutoAssign from './auto_assign'
+import { includesSkipKeywords } from './util'
 
 interface AppConfig {
   addReviewers: boolean
@@ -17,81 +14,6 @@ interface AppConfig {
   useAssigneeGroups: boolean
   reviewGroups: { [key: string]: string[] }
   assigneeGroups: { [key: string]: string[] }
-}
-
-export async function chooseReviewers(
-  context: Context,
-  config: AppConfig,
-  reviewers: string[],
-  owner: string
-): Promise<string[]> {
-  if (!config.reviewers && !config.reviewGroups) return []
-
-  const useGroups: boolean =
-    config.useReviewGroups && Object.keys(config.reviewGroups).length > 0
-
-  if (useGroups) {
-    reviewers = chooseUsersFromGroups(
-      owner,
-      config.reviewGroups,
-      config.numberOfReviewers
-    )
-  } else {
-    reviewers = chooseUsers(config.reviewers, config.numberOfReviewers, owner)
-  }
-
-  if (config.addReviewers && reviewers.length > 0) {
-    try {
-      const params = context.issue({ reviewers })
-      const result = await context.github.pullRequests.createReviewRequest(
-        params
-      )
-      context.log(result)
-    } catch (error) {
-      context.log(error)
-    }
-  }
-  return reviewers
-}
-
-export async function chooseAssignees(
-  context: Context,
-  config: AppConfig,
-  reviewers: string[],
-  owner: string
-): Promise<void> {
-  if (!config.addAssignees) return
-
-  let assignees: string[] = []
-
-  const useGroups: boolean =
-    config.useAssigneeGroups && Object.keys(config.assigneeGroups).length > 0
-
-  if (useGroups) {
-    assignees = chooseUsersFromGroups(
-      owner,
-      config.assigneeGroups,
-      config.numberOfAssignees || config.numberOfReviewers
-    )
-  } else if (reviewers.length > 0) {
-    assignees = config.assignees
-      ? chooseUsers(
-          config.assignees,
-          config.numberOfAssignees || config.numberOfReviewers,
-          owner
-        )
-      : reviewers
-  }
-
-  if (assignees.length > 0) {
-    try {
-      const params = context.issue({ assignees })
-      const result = await context.github.issues.addAssignees(params)
-      context.log(result)
-    } catch (error) {
-      context.log(error)
-    }
-  }
 }
 
 export async function handlePullRequest(context: Context): Promise<void> {
@@ -120,16 +42,13 @@ export async function handlePullRequest(context: Context): Promise<void> {
     )
   }
 
-  const reviewers: string[] = await chooseReviewers(
-    context,
-    config,
-    [],
-    context.payload.pull_request.user.login
-  )
-  await chooseAssignees(
-    context,
-    config,
-    reviewers,
-    context.payload.pull_request.user.login
-  )
+  const autoAssign = new AutoAssign(context, config)
+
+  if (config.addReviewers) {
+    await autoAssign.addReviewers()
+  }
+
+  if (config.addAssignees) {
+    await autoAssign.addAssignees()
+  }
 }
