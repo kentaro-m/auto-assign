@@ -1,5 +1,5 @@
 # Probot: Auto Assign
-[![CircleCI](https://img.shields.io/circleci/project/github/kentaro-m/auto-assign.svg?style=flat-square)](https://circleci.com/gh/kentaro-m/auto-assign)
+[![Actions Status](https://action-badges.now.sh/kentaro-m/auto-assign)](https://github.com/kentaro-m/auto-assign/actions)
 [![Coverage Status](https://coveralls.io/repos/github/kentaro-m/auto-assign/badge.svg?branch=master)](https://coveralls.io/github/kentaro-m/auto-assign?branch=master)
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/auto-assign)
 
