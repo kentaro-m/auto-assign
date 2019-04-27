@@ -15,14 +15,17 @@
 
 ## Usage
 1. [Install the app](https://github.com/apps/auto-assign).
-2. Create `.github/auto_assign.yml` in your repository.
+2. Create `.github/auto_assign.yml` in your repository with the following.
+
+### Single Reviewers List
+Add reviewers/assignees to the pull request based on single reviewers list.
 
 ```yaml
 # Set to true to add reviewers to pull requests
 addReviewers: true
 
 # Set to true to add assignees to pull requests
-addAssignees: true
+addAssignees: false
 
 # A list of reviewers to be added to pull requests (GitHub user name)
 reviewers:
@@ -37,6 +40,32 @@ numberOfReviewers: 0
 # A list of assignees, overrides reviewers if set
 # assignees:
 #   - assigneeA
+
+# A number of assignees to add to the pull request
+# Set to 0 to add all of the assignees.
+# Uses numberOfReviewers if unset.
+# numberOfAssignees: 2
+
+# A list of keywords to be skipped the process that add reviewers if pull requests include it
+# skipKeywords:
+#   - wip
+```
+
+### Multiple Reviewers List
+Add reviewers/assignees to the pull request based on multiple reviewers list.
+
+If you and peers work at the separate office or they work at the separate team by roles like frontend and backend, you might be good to use adding reviewers from each group.
+
+```yaml
+# Set to true to add reviewers to pull requests
+addReviewers: true
+
+# Set to true to add assignees to pull requests
+addAssignees: false
+
+# A number of reviewers added to the pull request
+# Set 0 to add all the reviewers (default: 0)
+numberOfReviewers: 1
 
 # A number of assignees to add to the pull request
 # Set to 0 to add all of the assignees.
@@ -75,6 +104,13 @@ useAssigneeGroups: false
 # skipKeywords:
 #   - wip
 ```
+
+## Advantage
+
+### Use Auto Assign in combination with code owners
+If you want to add the same reviewers every time the pull request is opened, you can use code owners. Also, if you want to add randomly reviewers, you can use this app together.
+
+[About code owners - GitHub Help](https://help.github.com/en/articles/about-code-owners)
 
 ## Development
 

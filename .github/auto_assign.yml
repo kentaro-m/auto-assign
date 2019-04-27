@@ -10,18 +10,18 @@ reviewers:
 
 # A number of reviewers added to the pull request
 # Set 0 to add all the reviewers (default: 0)
-numberOfReviewers: 3
+numberOfReviewers: 0
 
 # A list of assignees, overrides reviewers if set
 # assignees:
 #   - assigneeA
 
 # Set to true to add reviewers from different groups to pull requests
-useReviewGroups: true
+# useReviewGroups: true
 
 # A list of reviewers, split into different groups, to be added to pull requests (GitHub user name)
-reviewGroups:
-  groupA:
-    - user1
-  groupB:
-    - user2
+# reviewGroups:
+#   groupA:
+#     - user1
+#   groupB:
+#     - user2
