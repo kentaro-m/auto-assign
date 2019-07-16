@@ -3,7 +3,7 @@ import { chooseUsers, chooseUsersFromGroups } from './util'
 
 interface AppConfig {
   addReviewers: boolean
-  addAssignees: boolean
+  addAssignees: boolean | string
   reviewers: string[]
   assignees: string[]
   numberOfAssignees: number
@@ -66,7 +66,14 @@ export default class AutoAssign {
       this.config.useAssigneeGroups &&
       Object.keys(this.config.assigneeGroups).length > 0
 
-    if (useGroups) {
+    if (typeof this.config.addAssignees === 'string') {
+      if (this.config.addAssignees !== 'author') {
+        throw new Error(
+          "Error in configuration file to do with using addAssignees. Expected 'addAssignees' variable to be either boolean or 'author'"
+        )
+      }
+      assignees = [owner]
+    } else if (useGroups) {
       assignees = chooseUsersFromGroups(
         owner,
         this.config.assigneeGroups,
