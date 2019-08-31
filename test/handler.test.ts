@@ -504,6 +504,45 @@ describe('handlePullRequest', () => {
     expect(createReviewRequestSpy).not.toBeCalled()
   })
 
+  test('adds assignees to pull request from two different groups using numberOfReviewers if groups are enabled and number of assignees is not specified', async () => {
+    // MOCKS
+    context.github.pullRequests = {
+      createReviewRequest: jest.fn().mockImplementation(async () => { })
+    } as any
+    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+
+    context.github.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => { })
+    } as any
+    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+
+    // GIVEN
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: true,
+        addReviewers: false,
+        useAssigneeGroups: true,
+        numberOfReviewers: 1,
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+        assigneeGroups: {
+          groupA: ['group1-user1', 'group1-user2', 'group1-user3'],
+          groupB: ['group2-user1'],
+          groupC: ['group3-user1', 'group3-user2', 'group3-user3']
+        }
+      }
+    })
+
+    // WHEN
+    await handlePullRequest(context)
+
+    // THEN
+    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(3)
+    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/group1/)
+    expect(addAssigneesSpy.mock.calls[0][0].assignees[1]).toMatch(/group2/)
+    expect(addAssigneesSpy.mock.calls[0][0].assignees[2]).toMatch(/group3/)
+    expect(createReviewRequestSpy).not.toBeCalled()
+  })
+
   test('adds assignees to pull request from two different groups and reviewers are not specified', async () => {
     // MOCKS
     context.github.pullRequests = {
