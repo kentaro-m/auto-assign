@@ -29,6 +29,10 @@ export async function handlePullRequest(context: Context): Promise<void> {
     context.log('skips adding reviewers')
     return
   }
+  if (context.payload.pull_request.draft) {
+    context.log('ignore draft PR')
+    return
+  }
 
   if (config.useReviewGroups && !config.reviewGroups) {
     throw new Error(
