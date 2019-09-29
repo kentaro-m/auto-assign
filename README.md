@@ -105,6 +105,14 @@ useAssigneeGroups: false
 #   - wip
 ```
 
+### Assign Author as Assignee
+Add the PR creator as assignee to the pull request.
+
+```yaml
+# Set to author to set pr creater as assignee
+addAssignees: author
+```
+
 ## Advantage
 
 ### Use Auto Assign in combination with code owners

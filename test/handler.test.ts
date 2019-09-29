@@ -98,6 +98,58 @@ describe('handlePullRequest', () => {
     )
   })
 
+  test('adds pr-creator as assignee if addAssignees is set to author', async () => {
+    // MOCKS
+    context.github.pullRequests = {
+      createReviewRequest: jest.fn().mockImplementation(async () => { })
+    } as any
+    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+
+    context.github.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => { })
+    } as any
+    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+
+    // GIVEN
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: 'author',
+      }
+    })
+
+    // WHEN
+    await handlePullRequest(context)
+
+    // THEN
+    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(1)
+    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch('pr-creator')
+    expect(createReviewRequestSpy).not.toBeCalled()
+  })
+
+  test('responds with error if addAssignees is not set to boolean or author', async () => {
+    // MOCKS
+    context.github.pullRequests = {
+      createReviewRequest: jest.fn().mockImplementation(async () => { })
+    } as any
+
+    context.github.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => { })
+    } as any
+
+    // GIVEN
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: 'test',
+      }
+    })
+
+    try {
+      await handlePullRequest(context)
+    } catch (error) {
+      expect(error).toEqual(new Error("Error in configuration file to do with using addAssignees. Expected 'addAssignees' variable to be either boolean or 'author'"))
+    }
+  })
+
   test('adds reviewers to assignees to pull requests if the configuration is enabled ', async () => {
     context.config = jest.fn().mockImplementation(async () => {
       return {
