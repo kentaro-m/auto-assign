@@ -25,7 +25,8 @@ describe('handlePullRequest', () => {
             login: 'kentaro-m'
           }
         }
-      }
+      },
+      draft: false
     }
 
     context = new Context(event, {} as any, {} as any)
@@ -60,6 +61,15 @@ describe('handlePullRequest', () => {
     await handlePullRequest(context)
 
     expect(spy.mock.calls[0][0]).toEqual('skips adding reviewers')
+  })
+
+  test('skips drafts', async () => {
+    const spy = jest.spyOn(context, 'log')
+
+    event.payload.pull_request.draft = true;
+    await handlePullRequest(context)
+
+    expect(spy.mock.calls[0][0]).toEqual('ignore draft PR')
   })
 
   test('adds reviewers to pull requests if the configuration is enabled, but no assignees', async () => {
