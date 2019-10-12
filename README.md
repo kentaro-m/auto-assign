@@ -170,19 +170,9 @@ PRIVATE_KEY_PATH=.data/private-key.pem
 ```
 
 ### GitHub Actions
-Add `.github/main.workflow` to the repository you want to run the app.
+If you want to use the auto-assign app using GitHub Actions, refer to the following link. Also, because of providing the GitHub action for a new version (GitHub Actions v2; YAML format), the previous version (GitHub Actions v1; HCL format) is deprecated.
 
-```hcl
-workflow "Add reviewers/assignees to Pull Requests" {
-  on = "pull_request"
-  resolves = "Auto Assign"
-}
-
-action "Auto Assign" {
-  uses = "kentaro-m/auto-assign@master"
-  secrets = ["GITHUB_TOKEN"]
-}
-```
+[kentaro-m/auto-assign-action: An action which adds reviewers to the pull request when the pull request is opened.](https://github.com/kentaro-m/auto-assign-action)
 
 ## Contributing
 
