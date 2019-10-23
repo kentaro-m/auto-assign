@@ -1,8 +1,7 @@
 import { Context } from 'probot'
-import AutoAssign from './auto_assign'
-import { includesSkipKeywords } from './util'
+import { includesSkipKeywords, chooseAssignees, chooseReviewers } from './util'
 
-interface AppConfig {
+export interface Config {
   addReviewers: boolean
   addAssignees: boolean
   reviewers: string[]
@@ -17,7 +16,7 @@ interface AppConfig {
 }
 
 export async function handlePullRequest(context: Context): Promise<void> {
-  const config: AppConfig | null = await context.config<AppConfig | null>(
+  const config: Config | null = await context.config<Config | null>(
     'auto_assign.yml'
   )
   if (!config) {
@@ -25,7 +24,17 @@ export async function handlePullRequest(context: Context): Promise<void> {
   }
 
   const title = context.payload.pull_request.title
-  if (config.skipKeywords && includesSkipKeywords(title, config.skipKeywords)) {
+  const {
+    skipKeywords,
+    useReviewGroups,
+    reviewGroups,
+    useAssigneeGroups,
+    assigneeGroups,
+    addReviewers,
+    addAssignees
+  } = config
+
+  if (skipKeywords && includesSkipKeywords(title, skipKeywords)) {
     context.log('skips adding reviewers')
     return
   }
@@ -34,25 +43,47 @@ export async function handlePullRequest(context: Context): Promise<void> {
     return
   }
 
-  if (config.useReviewGroups && !config.reviewGroups) {
+  if (useReviewGroups && !reviewGroups) {
     throw new Error(
       "Error in configuration file to do with using review groups. Expected 'reviewGroups' variable to be set because the variable 'useReviewGroups' = true."
     )
   }
 
-  if (config.useAssigneeGroups && !config.assigneeGroups) {
+  if (useAssigneeGroups && !assigneeGroups) {
     throw new Error(
       "Error in configuration file to do with using review groups. Expected 'assigneeGroups' variable to be set because the variable 'useAssigneeGroups' = true."
     )
   }
 
-  const autoAssign = new AutoAssign(context, config)
+  const owner = context.payload.pull_request.user.login
 
-  if (config.addReviewers) {
-    await autoAssign.addReviewers()
+  if (addReviewers) {
+    try {
+      const reviewers = chooseReviewers(owner, config)
+
+      if (reviewers.length > 0) {
+        const params = context.issue({ reviewers })
+        const result = await context.github.pullRequests.createReviewRequest(
+          params
+        )
+        context.log(result)
+      }
+    } catch (error) {
+      context.log(error)
+    }
   }
 
-  if (config.addAssignees) {
-    await autoAssign.addAssignees()
+  if (addAssignees) {
+    try {
+      const assignees = chooseAssignees(owner, config)
+
+      if (assignees.length > 0) {
+        const params = context.issue({ assignees })
+        const result = await context.github.issues.addAssignees(params)
+        context.log(result)
+      }
+    } catch (error) {
+      context.log(error)
+    }
   }
 }
