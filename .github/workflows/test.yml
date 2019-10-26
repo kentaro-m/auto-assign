@@ -1,0 +1,33 @@
+name: 'Test'
+
+on: push
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '10', '12' ]
+    name: Node ${{ matrix.node }} test
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: install
+        run: npm install
+
+      - name: build
+        run: npm run build
+
+      - name: test
+        run: npm test
+
+      - name: lint
+        run: npm run lint
+
+      - name: audit
+        run: npm audit
