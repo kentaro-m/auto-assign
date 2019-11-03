@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "nodemon --exec \"npm start\"",
+    "dev": "nodemon",
     "start": "npm run build && probot run ./lib/index.js",
     "lint": "eslint src/**/*.ts",
     "test": "jest",
