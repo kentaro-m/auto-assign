@@ -1,5 +1,10 @@
 import { Context } from 'probot'
-import { includesSkipKeywords, chooseAssignees, chooseReviewers } from './util'
+import {
+  includesSkipKeywords,
+  chooseAssignees,
+  chooseReviewers,
+  isConfig
+} from './util'
 
 export interface Config {
   addReviewers: boolean
@@ -16,10 +21,9 @@ export interface Config {
 }
 
 export async function handlePullRequest(context: Context): Promise<void> {
-  const config: Config | null = await context.config<Config | null>(
-    'auto_assign.yml'
-  )
-  if (!config) {
+  const config = await context.config('auto_assign.yml')
+
+  if (!isConfig(config)) {
     throw new Error('the configuration file failed to load')
   }
 
@@ -34,7 +38,7 @@ export async function handlePullRequest(context: Context): Promise<void> {
     addAssignees
   } = config
 
-  if (skipKeywords && includesSkipKeywords(title, skipKeywords)) {
+  if (config.skipKeywords && includesSkipKeywords(title, skipKeywords)) {
     context.log('skips adding reviewers')
     return
   }
@@ -59,13 +63,11 @@ export async function handlePullRequest(context: Context): Promise<void> {
 
   if (addReviewers) {
     try {
-      const reviewers = chooseReviewers(owner, config)
+      const reviewers = chooseReviewers(owner, config as Config)
 
       if (reviewers.length > 0) {
         const params = context.issue({ reviewers })
-        const result = await context.github.pullRequests.createReviewRequest(
-          params
-        )
+        const result = await context.github.pulls.createReviewRequest(params)
         context.log(result)
       }
     } catch (error) {
@@ -75,7 +77,7 @@ export async function handlePullRequest(context: Context): Promise<void> {
 
   if (addAssignees) {
     try {
-      const assignees = chooseAssignees(owner, config)
+      const assignees = chooseAssignees(owner, config as Config)
 
       if (assignees.length > 0) {
         const params = context.issue({ assignees })

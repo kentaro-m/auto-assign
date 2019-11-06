@@ -39,8 +39,8 @@
     "@types/lodash": "^4.14.119",
     "@types/node": "^10.12.18",
     "lodash": "^4.17.15",
-    "probot": "^7.5.0",
-    "typescript": "^3.2.2"
+    "probot": "^9.6.3",
+    "typescript": "^3.7.2"
   },
   "devDependencies": {
     "@types/jest": "^23.3.0",

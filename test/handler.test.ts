@@ -88,14 +88,14 @@ describe('handlePullRequest', () => {
       addAssignees: jest.fn().mockImplementation(async () => {})
     } as any
 
-    context.github.pullRequests = {
+    context.github.pulls = {
       // tslint:disable-next-line:no-empty
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
     const createReviewRequestSpy = jest.spyOn(
-      context.github.pullRequests,
+      context.github.pulls,
       'createReviewRequest'
     )
 
@@ -110,10 +110,10 @@ describe('handlePullRequest', () => {
 
   test('adds pr-creator as assignee if addAssignees is set to author', async () => {
     // MOCKS
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => { })
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => { })
@@ -138,7 +138,7 @@ describe('handlePullRequest', () => {
 
   test('responds with error if addAssignees is not set to boolean or author', async () => {
     // MOCKS
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => { })
     } as any
 
@@ -176,14 +176,14 @@ describe('handlePullRequest', () => {
       addAssignees: jest.fn().mockImplementation(async () => {})
     } as any
 
-    context.github.pullRequests = {
+    context.github.pulls = {
       // tslint:disable-next-line:no-empty
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
     const createReviewRequestSpy = jest.spyOn(
-      context.github.pullRequests,
+      context.github.pulls,
       'createReviewRequest'
     )
 
@@ -215,14 +215,14 @@ describe('handlePullRequest', () => {
       addAssignees: jest.fn().mockImplementation(async () => {})
     } as any
 
-    context.github.pullRequests = {
+    context.github.pulls = {
       // tslint:disable-next-line:no-empty
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
     const createReviewRequestSpy = jest.spyOn(
-      context.github.pullRequests,
+      context.github.pulls,
       'createReviewRequest'
     )
 
@@ -250,14 +250,14 @@ describe('handlePullRequest', () => {
       addAssignees: jest.fn().mockImplementation(async () => {})
     } as any
 
-    context.github.pullRequests = {
+    context.github.pulls = {
       // tslint:disable-next-line:no-empty
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
     const createReviewRequestSpy = jest.spyOn(
-      context.github.pullRequests,
+      context.github.pulls,
       'createReviewRequest'
     )
 
@@ -287,14 +287,14 @@ describe('handlePullRequest', () => {
       addAssignees: jest.fn().mockImplementation(async () => {})
     } as any
 
-    context.github.pullRequests = {
+    context.github.pulls = {
       // tslint:disable-next-line:no-empty
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
     const createReviewRequestSpy = jest.spyOn(
-      context.github.pullRequests,
+      context.github.pulls,
       'createReviewRequest'
     )
 
@@ -321,7 +321,7 @@ describe('handlePullRequest', () => {
       addAssignees: jest.fn().mockImplementation(async () => {})
     } as any
 
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {
         throw new Error('Review cannot be requested from pull request author.')
       })
@@ -353,12 +353,12 @@ describe('handlePullRequest', () => {
       })
     } as any
 
-    context.github.pullRequests = {
+    context.github.pulls = {
       // tslint:disable-next-line:no-empty
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
 
-    const spy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const spy = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     await handlePullRequest(context)
 
@@ -422,10 +422,10 @@ describe('handlePullRequest', () => {
 
   test('adds reviewers to pull request from reviewers if groups are enabled and empty', async () => {
       // MOCKS
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
@@ -455,10 +455,10 @@ describe('handlePullRequest', () => {
 
   test('adds reviewers to pull request from two different groups if review groups are enabled', async () => {
     // MOCKS
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
@@ -491,10 +491,10 @@ describe('handlePullRequest', () => {
 
   test('adds all reviewers from a group that has less members than the number of reviews requested', async () => {
     // MOCKS
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
@@ -528,10 +528,10 @@ describe('handlePullRequest', () => {
 
   test('adds assignees to pull request from two different groups if groups are enabled and number of assignees is specified', async () => {
     // MOCKS
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
@@ -568,10 +568,10 @@ describe('handlePullRequest', () => {
 
   test('adds assignees to pull request from two different groups using numberOfReviewers if groups are enabled and number of assignees is not specified', async () => {
     // MOCKS
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => { })
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => { })
@@ -607,10 +607,10 @@ describe('handlePullRequest', () => {
 
   test('adds assignees to pull request from two different groups and reviewers are not specified', async () => {
     // MOCKS
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
@@ -646,10 +646,10 @@ describe('handlePullRequest', () => {
 
   test('adds normal reviewers and assignees from groups into the pull request', async () => {
     // MOCKS
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
@@ -689,10 +689,10 @@ describe('handlePullRequest', () => {
 
   test('adds normal assignees and reviewers from groups into the pull request', async () => {
     // MOCKS
-    context.github.pullRequests = {
+    context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pullRequests, 'createReviewRequest')
+    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
