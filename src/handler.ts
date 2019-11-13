@@ -33,7 +33,7 @@ export async function handlePullRequest(context: Context): Promise<void> {
     addAssignees
   } = config
 
-  if (config.skipKeywords && includesSkipKeywords(title, skipKeywords)) {
+  if (skipKeywords && includesSkipKeywords(title, skipKeywords)) {
     context.log('skips adding reviewers')
     return
   }
