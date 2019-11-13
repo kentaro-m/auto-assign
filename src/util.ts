@@ -103,17 +103,3 @@ export function includesSkipKeywords(
 
   return false
 }
-
-export function isConfig(data: any): data is Config {
-  if (
-    data &&
-    (typeof data.addReviewers === 'boolean' ||
-      typeof data.addAssignees === 'boolean' ||
-      typeof data.addAssignees === 'string' ||
-      typeof data.useAssigneeGroups === 'boolean' ||
-      typeof data.useReviewGroups === 'boolean')
-  ) {
-    return true
-  }
-  return false
-}

@@ -1,10 +1,5 @@
 import { Context } from 'probot'
-import {
-  includesSkipKeywords,
-  chooseAssignees,
-  chooseReviewers,
-  isConfig
-} from './util'
+import { includesSkipKeywords, chooseAssignees, chooseReviewers } from './util'
 
 export interface Config {
   addReviewers: boolean
@@ -21,9 +16,9 @@ export interface Config {
 }
 
 export async function handlePullRequest(context: Context): Promise<void> {
-  const config = await context.config('auto_assign.yml')
+  const config = (await context.config('auto_assign.yml')) as Config
 
-  if (!isConfig(config)) {
+  if (!config) {
     throw new Error('the configuration file failed to load')
   }
 
@@ -63,7 +58,7 @@ export async function handlePullRequest(context: Context): Promise<void> {
 
   if (addReviewers) {
     try {
-      const reviewers = chooseReviewers(owner, config as Config)
+      const reviewers = chooseReviewers(owner, config)
 
       if (reviewers.length > 0) {
         const params = context.issue({ reviewers })
@@ -77,7 +72,7 @@ export async function handlePullRequest(context: Context): Promise<void> {
 
   if (addAssignees) {
     try {
-      const assignees = chooseAssignees(owner, config as Config)
+      const assignees = chooseAssignees(owner, config)
 
       if (assignees.length > 0) {
         const params = context.issue({ assignees })
