@@ -148,7 +148,7 @@ See [Contributing](#contributing) for more information about making improvements
     * For the Homepage URL, use your repository url or your homepage url: `https://random-word.glitch.me/probot`.
     * For the Webhook URL, use this URL (again, updating the domain to match yours): `https://random-word.glitch.me/`. Notice that we left off the `/probot`.
     * For the Webhook Secret, just use "development". Input the same value in `.env` file.
-    * On the **Permissions & webhooks** tab, add read and write permissions for pull requests.
+    * On the **Permissions & webhooks** tab, add read/write permissions, read metadata and read single file (`.github/auto_assign.yml`) for pull requests.
     * On the **Permissions & webhooks** tab, subscribe to **Pull request** events.
     * Save your changes.
     * Download the private key.

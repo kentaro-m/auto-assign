@@ -16,9 +16,8 @@ export interface Config {
 }
 
 export async function handlePullRequest(context: Context): Promise<void> {
-  const config: Config | null = await context.config<Config | null>(
-    'auto_assign.yml'
-  )
+  const config = (await context.config('auto_assign.yml')) as Config
+
   if (!config) {
     throw new Error('the configuration file failed to load')
   }
@@ -63,9 +62,7 @@ export async function handlePullRequest(context: Context): Promise<void> {
 
       if (reviewers.length > 0) {
         const params = context.issue({ reviewers })
-        const result = await context.github.pullRequests.createReviewRequest(
-          params
-        )
+        const result = await context.github.pulls.createReviewRequest(params)
         context.log(result)
       }
     } catch (error) {
