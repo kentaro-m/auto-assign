@@ -10,7 +10,7 @@
 ## How it works
 * When the pull request is opened, automatically add reviewers/assignees to the pull request.
 * If the number of reviewers is specified, randomly add reviewers/assignees to the pull request.
-* If reviewers/assignees are separated into groups in the config file, randomply select the number of reviewers from each group.
+* If reviewers/assignees are separated into groups in the config file, randomly select the number of reviewers from each group.
 * If the title of the pull request contains a specific keyword, do not add reviewers/assignees to the pull request.
 
 ## Usage
