@@ -58,10 +58,13 @@ export async function handlePullRequest(context: Context): Promise<void> {
 
   if (addReviewers) {
     try {
-      const reviewers = chooseReviewers(owner, config)
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      const { reviewers, team_reviewers } = chooseReviewers(owner, config)
 
-      if (reviewers.length > 0) {
-        const params = context.issue({ reviewers })
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      if (reviewers.length > 0 || team_reviewers.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        const params = context.issue({ reviewers, team_reviewers })
         const result = await context.github.pulls.createReviewRequest(params)
         context.log(result)
       }
