@@ -32,6 +32,17 @@ describe('chooseUsers', () => {
     expect(list.users).toEqual([])
   })
 
+  test('returns the team reviewers list when reviewers contain slash', () => {
+    const prCreator = 'pr-creator'
+    const reviewers = ['org/team_reviewer1', 'pr-creator']
+    const numberOfReviewers = 1
+
+    const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
+
+    expect(list.teams).toEqual(['team_reviewer1'])
+    expect(list.users).toEqual([])
+  })
+
   test('returns the reviewer list if the number of reviewers is set', () => {
     const prCreator = 'pr-creator'
     const reviewers = ['reviewer1', 'reviewer2', 'reviewer3', 'pr-creator']

@@ -13,9 +13,10 @@ export function chooseUsers(
 ): ChooseUsersResponse {
   const { teams, users } = candidates.reduce(
     (acc: ChooseUsersResponse, reviewer: string): ChooseUsersResponse => {
-      const isTeam = reviewer.startsWith('/')
+      const separator = '/'
+      const isTeam = reviewer.includes(separator)
       if (isTeam) {
-        const team = reviewer.slice(1)
+        const team = reviewer.split(separator)[1]
         acc.teams = [...acc.teams, team]
       } else if (reviewer !== filterUser) {
         acc.users = [...acc.users, reviewer]
