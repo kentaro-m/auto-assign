@@ -1,23 +1,46 @@
 import _ from 'lodash'
 import { Config } from './handler'
 
+interface ChooseUsersResponse {
+  teams: string[]
+  users: string[]
+}
+
 export function chooseUsers(
   candidates: string[],
   desiredNumber: number,
   filterUser: string = ''
-): string[] {
-  const filteredCandidates = candidates.filter(
-    (reviewer: string): boolean => {
-      return reviewer !== filterUser
+): ChooseUsersResponse {
+  const { teams, users } = candidates.reduce(
+    (acc: ChooseUsersResponse, reviewer: string): ChooseUsersResponse => {
+      const separator = '/'
+      const isTeam = reviewer.includes(separator)
+      if (isTeam) {
+        const team = reviewer.split(separator)[1]
+        acc.teams = [...acc.teams, team]
+      } else if (reviewer !== filterUser) {
+        acc.users = [...acc.users, reviewer]
+      }
+      return acc
+    },
+    {
+      teams: [],
+      users: []
     }
   )
 
   // all-assign
   if (desiredNumber === 0) {
-    return filteredCandidates
+    return {
+      teams,
+      users
+    }
   }
 
-  return _.sampleSize(filteredCandidates, desiredNumber)
+  return {
+    teams,
+    users: _.sampleSize(users, desiredNumber)
+  }
 }
 
 export function chooseUsersFromGroups(
@@ -27,28 +50,43 @@ export function chooseUsersFromGroups(
 ): string[] {
   let users: string[] = []
   for (const group in groups) {
-    users = users.concat(chooseUsers(groups[group], desiredNumber, owner))
+    users = users.concat(chooseUsers(groups[group], desiredNumber, owner).users)
   }
   return users
 }
 
-export function chooseReviewers(owner: string, config: Config): string[] {
+export function chooseReviewers(
+  owner: string,
+  config: Config
+): {
+  reviewers: string[]
+  team_reviewers: string[]
+} {
   const { useReviewGroups, reviewGroups, numberOfReviewers, reviewers } = config
-  let chosenReviewers: string[] = []
   const useGroups: boolean =
     useReviewGroups && Object.keys(reviewGroups).length > 0
 
   if (useGroups) {
-    chosenReviewers = chooseUsersFromGroups(
+    const chosenReviewers = chooseUsersFromGroups(
       owner,
       reviewGroups,
       numberOfReviewers
     )
-  } else {
-    chosenReviewers = chooseUsers(reviewers, numberOfReviewers, owner)
+
+    return {
+      reviewers: chosenReviewers,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      team_reviewers: []
+    }
   }
 
-  return chosenReviewers
+  const chosenReviewers = chooseUsers(reviewers, numberOfReviewers, owner)
+
+  return {
+    reviewers: chosenReviewers.users,
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    team_reviewers: chosenReviewers.teams
+  }
 }
 
 export function chooseAssignees(owner: string, config: Config): string[] {
@@ -85,7 +123,7 @@ export function chooseAssignees(owner: string, config: Config): string[] {
       candidates,
       numberOfAssignees || numberOfReviewers,
       owner
-    )
+    ).users
   }
 
   return chosenAssignees

@@ -103,8 +103,46 @@ describe('handlePullRequest', () => {
 
     expect(addAssigneesSpy).not.toBeCalled()
     expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(3)
+    expect(createReviewRequestSpy.mock.calls[0][0].team_reviewers).toHaveLength(0)
     expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(
       /reviewer/
+    )
+  })
+
+  test('adds team_reviewers to pull requests if the configuration is enabled, but no assignees', async () => {
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: false,
+        addReviewers: true,
+        numberOfReviewers: 0,
+        reviewers: ['/team_reviewer1'],
+        skipKeywords: ['wip']
+      }
+    })
+
+    context.github.issues = {
+      // tslint:disable-next-line:no-empty
+      addAssignees: jest.fn().mockImplementation(async () => {})
+    } as any
+
+    context.github.pulls = {
+      // tslint:disable-next-line:no-empty
+      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    } as any
+
+    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const createReviewRequestSpy = jest.spyOn(
+      context.github.pulls,
+      'createReviewRequest'
+    )
+
+    await handlePullRequest(context)
+
+    expect(addAssigneesSpy).not.toBeCalled()
+    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(0)
+    expect(createReviewRequestSpy.mock.calls[0][0].team_reviewers).toHaveLength(1)
+    expect(createReviewRequestSpy.mock.calls[0][0].team_reviewers[0]).toMatch(
+      /team_reviewer/
     )
   })
 

@@ -3,12 +3,12 @@ import { chooseUsers, chooseUsersFromGroups, includesSkipKeywords } from '../src
 describe('chooseUsers', () => {
   test('returns the reviewer list without the PR creator', () => {
     const prCreator = 'pr-creator'
-    const reviewers = ['reviewer1','reviewer2', 'reviewer3', 'pr-creator']
+    const reviewers = ['reviewer1', 'reviewer2', 'reviewer3', 'pr-creator']
     const numberOfReviewers = 0
 
     const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
 
-    expect(list).toEqual(['reviewer1','reviewer2', 'reviewer3'])
+    expect(list.users).toEqual(['reviewer1', 'reviewer2', 'reviewer3'])
   })
 
   test('returns the only other reviewer', () => {
@@ -18,17 +18,39 @@ describe('chooseUsers', () => {
 
     const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
 
-    expect(list).toEqual(['reviewer1'])
+    expect(list.users).toEqual(['reviewer1'])
   })
 
-  test('returns the reviewer list if the number of reviewers is setted', () => {
+  test('returns the team reviewers list when reviewers start with slash', () => {
     const prCreator = 'pr-creator'
-    const reviewers = ['reviewer1','reviewer2', 'reviewer3', 'pr-creator']
+    const reviewers = ['/team_reviewer1', 'pr-creator']
+    const numberOfReviewers = 1
+
+    const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
+
+    expect(list.teams).toEqual(['team_reviewer1'])
+    expect(list.users).toEqual([])
+  })
+
+  test('returns the team reviewers list when reviewers contain slash', () => {
+    const prCreator = 'pr-creator'
+    const reviewers = ['org/team_reviewer1', 'pr-creator']
+    const numberOfReviewers = 1
+
+    const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
+
+    expect(list.teams).toEqual(['team_reviewer1'])
+    expect(list.users).toEqual([])
+  })
+
+  test('returns the reviewer list if the number of reviewers is set', () => {
+    const prCreator = 'pr-creator'
+    const reviewers = ['reviewer1', 'reviewer2', 'reviewer3', 'pr-creator']
     const numberOfReviewers = 2
 
     const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
 
-    expect(list.length).toEqual(2)
+    expect(list.users.length).toEqual(2)
   })
 
   test('returns empty array if the reviewer is the PR creator', () => {
@@ -38,7 +60,7 @@ describe('chooseUsers', () => {
 
     const list = chooseUsers(reviewers, numberOfReviewers, prCreator)
 
-    expect(list.length).toEqual(0)
+    expect(list.users.length).toEqual(0)
   })
 
   test('returns full reviewer array if not passing the user to filter out', () => {
@@ -47,7 +69,7 @@ describe('chooseUsers', () => {
 
     const list = chooseUsers(reviewers, numberOfReviewers)
 
-    expect(list).toEqual(expect.arrayContaining(['pr-creator']))
+    expect(list.users).toEqual(expect.arrayContaining(['pr-creator']))
   })
 })
 
