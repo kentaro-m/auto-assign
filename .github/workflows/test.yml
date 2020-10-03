@@ -5,17 +5,14 @@ on: push
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [ '10', '12' ]
-    name: Node ${{ matrix.node }} test
+    name: test
     steps:
       - uses: actions/checkout@v1
 
-      - name: setup node
+      - name: setup node 12.x
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node }}
+          node-version: '12.x'
 
       - name: install
         run: npm install
