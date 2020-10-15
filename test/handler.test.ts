@@ -1,5 +1,5 @@
 import { Context } from 'probot'
-import { handlePullRequest } from '../src/handler'
+import { handlePullRequest, getTeamMembers } from '../src/handler'
 
 describe('handlePullRequest', () => {
   let event: any
@@ -94,7 +94,7 @@ describe('handlePullRequest', () => {
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(
+    const createReviewRequestSpy: any = jest.spyOn(
       context.github.pulls,
       'createReviewRequest'
     )
@@ -131,7 +131,7 @@ describe('handlePullRequest', () => {
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(
+    const createReviewRequestSpy: any = jest.spyOn(
       context.github.pulls,
       'createReviewRequest'
     )
@@ -156,7 +156,7 @@ describe('handlePullRequest', () => {
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => { })
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy: any = jest.spyOn(context.github.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -219,7 +219,7 @@ describe('handlePullRequest', () => {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
 
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy: any = jest.spyOn(context.github.issues, 'addAssignees')
     const createReviewRequestSpy = jest.spyOn(
       context.github.pulls,
       'createReviewRequest'
@@ -258,7 +258,7 @@ describe('handlePullRequest', () => {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
 
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy: any = jest.spyOn(context.github.issues, 'addAssignees')
     const createReviewRequestSpy = jest.spyOn(
       context.github.pulls,
       'createReviewRequest'
@@ -293,8 +293,8 @@ describe('handlePullRequest', () => {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
 
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(
+    const addAssigneesSpy: any = jest.spyOn(context.github.issues, 'addAssignees')
+    const createReviewRequestSpy: any = jest.spyOn(
       context.github.pulls,
       'createReviewRequest'
     )
@@ -365,7 +365,7 @@ describe('handlePullRequest', () => {
       })
     } as any
 
-    const spy = jest.spyOn(context.github.issues, 'addAssignees')
+    const spy: any = jest.spyOn(context.github.issues, 'addAssignees')
 
     await handlePullRequest(context)
 
@@ -396,7 +396,7 @@ describe('handlePullRequest', () => {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
 
-    const spy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const spy: any = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     await handlePullRequest(context)
 
@@ -463,7 +463,7 @@ describe('handlePullRequest', () => {
     context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const createReviewRequestSpy: any = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
@@ -496,7 +496,7 @@ describe('handlePullRequest', () => {
     context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const createReviewRequestSpy: any = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
@@ -532,7 +532,7 @@ describe('handlePullRequest', () => {
     context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const createReviewRequestSpy: any = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
@@ -574,7 +574,7 @@ describe('handlePullRequest', () => {
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy: any = jest.spyOn(context.github.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -614,7 +614,7 @@ describe('handlePullRequest', () => {
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => { })
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy: any = jest.spyOn(context.github.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -653,7 +653,7 @@ describe('handlePullRequest', () => {
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy: any = jest.spyOn(context.github.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -687,12 +687,12 @@ describe('handlePullRequest', () => {
     context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const createReviewRequestSpy: any = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy: any = jest.spyOn(context.github.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -730,12 +730,12 @@ describe('handlePullRequest', () => {
     context.github.pulls = {
       createReviewRequest: jest.fn().mockImplementation(async () => {})
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const createReviewRequestSpy: any = jest.spyOn(context.github.pulls, 'createReviewRequest')
 
     context.github.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {})
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy: any = jest.spyOn(context.github.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -765,5 +765,229 @@ describe('handlePullRequest', () => {
     expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(/group1-reviewer/)
     expect(createReviewRequestSpy.mock.calls[0][0].reviewers[2]).toMatch(/group2-reviewer/)
     expect(createReviewRequestSpy.mock.calls[0][0].reviewers[3]).toMatch(/group3-reviewer/)
+  })
+
+  test('should throw error if reviewersInTeams contain a single string without org or team_slug', async () => {
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addReviewers: true,
+        numberOfReviewers: 1,
+        reviewersInTeams: ['justice-league']
+      }
+    })
+
+    try {
+      await handlePullRequest(context)
+    } catch (error) {
+      expect(error).toEqual(new Error("Error in configuration file to expand a team reviewersInTeams must be a list of org/team_slug."))
+    }
+  })
+
+  test('should throw error if reviewerInTeams contains only the team_slug', async () => {
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addReviewers: true,
+        numberOfReviewers: 1,
+        reviewersInTeams: ['/teen_titans']
+      }
+    })
+
+    try {
+      await handlePullRequest(context)
+    } catch (error) {
+      expect(error).toEqual(new Error("Error in configuration file to expand a team reviewersInTeams must be a list of org/team_slug."))
+    }
+  })
+
+  test('adds reviewers to pull requests from list in reviewersInTeams', async () => {
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addReviewers: true,
+        numberOfReviewers: 1,
+        reviewersInTeams: ['justice-league/teen_titans']
+      }
+    })
+
+    context.github.teams = {
+      // tslint:disable-next-line:no-empty
+      getByName: jest.fn().mockImplementation(async () => ({data: {id: '1'}})),
+      listMembersLegacy: jest.fn().mockImplementation(async () => ({data: [{login: 'Robin'}, {login: 'Raven'}]})),
+    } as any
+
+    context.github.pulls = {
+      // tslint:disable-next-line:no-empty
+      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    } as any
+
+    const createReviewRequestSpy: any = jest.spyOn(
+      context.github.pulls,
+      'createReviewRequest'
+    )
+
+    await handlePullRequest(context)
+    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(1)
+    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(/[Robin, Raven]/)
+  })
+
+  test('adds reviewers to pull requests from list in reviewersInTeams and list of reviewers in config', async () => {
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addReviewers: true,
+        numberOfReviewers: 2,
+        reviewersInTeams: ['justice-league/teen_titans'],
+        reviewers: ['Robin'],
+      }
+    })
+
+    context.github.teams = {
+      // tslint:disable-next-line:no-empty
+      getByName: jest.fn().mockImplementation(async () => ({data: {id: '1'}})),
+      listMembersLegacy: jest.fn().mockImplementation(async () => ({data: [{login: 'Raven'}]})),
+    } as any
+
+    context.github.pulls = {
+      // tslint:disable-next-line:no-empty
+      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    } as any
+
+    const createReviewRequestSpy: any = jest.spyOn(
+      context.github.pulls,
+      'createReviewRequest'
+    )
+
+    await handlePullRequest(context)
+    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(2)
+    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toEqual(expect.arrayContaining(['Robin', 'Raven']));
+  })
+
+  test('adds unique reviewers to pull requests from list in reviewersInTeams and list of reviewers in config', async () => {
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addReviewers: true,
+        numberOfReviewers: 2,
+        reviewersInTeams: ['justice-league/teen_titans'],
+        reviewers: ['Robin'],
+      }
+    })
+
+    context.github.teams = {
+      // tslint:disable-next-line:no-empty
+      getByName: jest.fn().mockImplementation(async () => ({data: {id: '1'}})),
+      listMembersLegacy: jest.fn().mockImplementation(async () => ({data: [{login: 'Robin'}, {login: 'Raven'}]})),
+    } as any
+
+    context.github.pulls = {
+      // tslint:disable-next-line:no-empty
+      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    } as any
+
+    const createReviewRequestSpy: any = jest.spyOn(
+      context.github.pulls,
+      'createReviewRequest'
+    )
+
+    await handlePullRequest(context)
+    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(2)
+    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toEqual(expect.arrayContaining(['Robin', 'Raven']));
+  })
+})
+
+describe('handlePullRequest', () => {
+  let event: any
+  let context: Context
+  beforeEach(async () => {
+    event = {
+      id: '456',
+      name: 'pull_request',
+      payload: {
+        action: 'opened',
+        number: '1',
+        pull_request: {
+          number: '1',
+          title: 'test',
+          user: {
+            login: 'pr-creator'
+          }
+        },
+        repository: {
+          name: 'auto-assign',
+          owner: {
+            login: 'itomtom'
+          }
+        }
+      },
+      draft: false
+    }
+
+    context = new Context(event, {} as any, {} as any)
+    context.log = jest.fn() as any
+  })
+
+  it('should return team members if listMembersInOrg is available', async () => {
+    context.github.teams = {
+      // tslint:disable-next-line:no-empty
+      listMembersInOrg: jest.fn().mockImplementation(async () => ({data: [{login: 'Robin'}, {login: 'Raven'}]})),
+    } as any
+    const spy = jest.spyOn(context, 'log')
+
+    const result = await getTeamMembers(context, {org: 'justice-league', teamSlug: 'teen_titans'})
+    expect(result).toEqual(['Robin', 'Raven'])
+    expect(spy).not.toBeCalled()
+  })
+
+  it('should throw an error if team id is not returned', async () => {
+    context.github.teams = {
+      // tslint:disable-next-line:no-empty
+      listMembersLegacy: jest.fn().mockImplementation(async () => ({data: [{login: 'Robin'}, {login: 'Raven'}]})),
+    } as any
+    const spy = jest.spyOn(context.github.teams, 'listMembersLegacy')
+
+    try {
+      await getTeamMembers(context, {org: 'justice-league', teamSlug: 'teen_titans'})
+    } catch(error) {
+      expect(error).toEqual(new Error('Cannot fetch team id for team teen_titans under organisation justice-league.'))
+    }
+    expect(spy).not.toBeCalled()
+  })
+
+  it('should throw an error if team id is returned but the list of members in the team cannot be fetched', async () => {
+    context.github.teams = {
+      // tslint:disable-next-line:no-empty
+      getByName: jest.fn().mockImplementation(async () => ({data: {id: '1'}})),
+    } as any
+    const spy = jest.spyOn(context, 'log')
+
+    try {
+      await getTeamMembers(context, {org: 'justice-league', teamSlug: 'teen_titans'})
+    } catch(error) {
+      expect(error).toEqual(new Error('Cannot fetch list of members in team teen_titans under organisation justice-league.'))
+    }
+    expect(spy).toBeCalled()
+  })
+
+  it('should return list of members in the team', async () => {
+    context.github.teams = {
+      // tslint:disable-next-line:no-empty
+      getByName: jest.fn().mockImplementation(async () => ({data: {id: '1'}})),
+      listMembersLegacy: jest.fn().mockImplementation(async () => ({data: [{login: 'Robin'}, {login: 'Raven'}]})),
+    } as any
+    const spy = jest.spyOn(context, 'log')
+
+    const result = await getTeamMembers(context, {org: 'justice-league', teamSlug: 'teen_titans'})
+    expect(result).toEqual(['Robin', 'Raven'])
+    expect(spy).toBeCalled()
+  })
+
+  it('should return an empty list of members if listMembersLegacy is empty', async () => {
+    context.github.teams = {
+      // tslint:disable-next-line:no-empty
+      getByName: jest.fn().mockImplementation(async () => ({data: {id: '1'}})),
+      listMembersLegacy: jest.fn().mockImplementation(async () => ({data: []})),
+    } as any
+    const spy = jest.spyOn(context, 'log')
+
+    const result = await getTeamMembers(context, {org: 'justice-league', teamSlug: 'teen_titans'})
+    expect(result).toEqual([])
+    expect(spy).toBeCalled()
   })
 })

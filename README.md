@@ -142,6 +142,40 @@ useAssigneeGroups: false
 #   - wip
 ```
 
+#### Add Members in Github Team(s) to Reviewers List
+
+Randomly add members in Github team(s) to the pull request based on number of reviewers listed using the `org/team_slug` syntax.
+
+```yaml
+# Set to true to add reviewers to pull requests
+addReviewers: true
+
+# Set to true to add assignees to pull requests
+addAssignees: false
+
+# A list of team reviewers to be added to pull requests (GitHub team slug)
+reviewersInTeams:
+  - org/teamReviewerA
+  - org/teamReviewerB
+
+# Number of reviewers has no impact on Github teams
+# Set 0 to add all the reviewers (default: 0)
+numberOfReviewers: 2
+
+# A list of assignees, overrides reviewers if set
+# assignees:
+#   - assigneeA
+
+# A number of assignees to add to the pull request
+# Set to 0 to add all of the assignees.
+# Uses numberOfReviewers if unset.
+# numberOfAssignees: 2
+
+# A list of keywords to be skipped the process that add reviewers if pull requests include it
+# skipKeywords:
+#   - wip
+```
+
 ### Assign Author as Assignee
 Add the PR creator as assignee to the pull request.
 
