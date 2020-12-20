@@ -64,8 +64,8 @@ export async function handlePullRequest(context: Context): Promise<void> {
       // eslint-disable-next-line @typescript-eslint/camelcase
       if (reviewers.length > 0 || team_reviewers.length > 0) {
         // eslint-disable-next-line @typescript-eslint/camelcase
-        const params = context.issue({ reviewers, team_reviewers })
-        const result = await context.github.pulls.createReviewRequest(params)
+        const params = context.pullRequest({ reviewers, team_reviewers })
+        const result = await context.octokit.pulls.requestReviewers(params)
         context.log(result)
       }
     } catch (error) {
@@ -79,7 +79,7 @@ export async function handlePullRequest(context: Context): Promise<void> {
 
       if (assignees.length > 0) {
         const params = context.issue({ assignees })
-        const result = await context.github.issues.addAssignees(params)
+        const result = await context.octokit.issues.addAssignees(params)
         context.log(result)
       }
     } catch (error) {
