@@ -58,7 +58,7 @@
     "ts-jest": "26.4.4"
   },
   "engines": {
-    "node": "12.x"
+    "node": "14.x"
   },
   "standard": {
     "env": [
