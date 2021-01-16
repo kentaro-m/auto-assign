@@ -16,17 +16,17 @@ describe('handlePullRequest', () => {
           number: '1',
           title: 'test',
           user: {
-            login: 'pr-creator'
-          }
+            login: 'pr-creator',
+          },
         },
         repository: {
           name: 'auto-assign',
           owner: {
-            login: 'kentaro-m'
-          }
-        }
+            login: 'kentaro-m',
+          },
+        },
       },
-      draft: false
+      draft: false,
     }
 
     context = new Context(event, {} as any, {} as any)
@@ -37,7 +37,7 @@ describe('handlePullRequest', () => {
         addReviewers: true,
         numberOfReviewers: 0,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
-        skipKeywords: ['wip']
+        skipKeywords: ['wip'],
       }
     })
 
@@ -46,7 +46,6 @@ describe('handlePullRequest', () => {
 
   test('responds with the error if the configuration file failed to load', async () => {
     try {
-      // tslint:disable-next-line:no-empty
       context.config = jest.fn().mockImplementation(async () => {})
       await handlePullRequest(context)
     } catch (error) {
@@ -66,7 +65,7 @@ describe('handlePullRequest', () => {
   test('skips drafts', async () => {
     const spy = jest.spyOn(context, 'log')
 
-    event.payload.pull_request.draft = true;
+    event.payload.pull_request.draft = true
     await handlePullRequest(context)
 
     expect(spy.mock.calls[0][0]).toEqual('ignore draft PR')
@@ -79,32 +78,30 @@ describe('handlePullRequest', () => {
         addReviewers: true,
         numberOfReviewers: 0,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3', 'pr-creator'],
-        skipKeywords: ['wip']
+        skipKeywords: ['wip'],
       }
     })
 
-    context.github.issues = {
-      // tslint:disable-next-line:no-empty
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    context.github.pulls = {
-      // tslint:disable-next-line:no-empty
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(
-      context.github.pulls,
-      'createReviewRequest'
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
     )
 
     await handlePullRequest(context)
 
     expect(addAssigneesSpy).not.toBeCalled()
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(3)
-    expect(createReviewRequestSpy.mock.calls[0][0].team_reviewers).toHaveLength(0)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(3)
+    expect(requestReviewersSpy.mock.calls[0][0]?.team_reviewers).toHaveLength(0)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(
       /reviewer/
     )
   })
@@ -116,47 +113,48 @@ describe('handlePullRequest', () => {
         addReviewers: true,
         numberOfReviewers: 0,
         reviewers: ['/team_reviewer1'],
-        skipKeywords: ['wip']
+        skipKeywords: ['wip'],
       }
     })
 
-    context.github.issues = {
-      // tslint:disable-next-line:no-empty
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    context.github.pulls = {
-      // tslint:disable-next-line:no-empty
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(
-      context.github.pulls,
-      'createReviewRequest'
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
     )
 
     await handlePullRequest(context)
 
     expect(addAssigneesSpy).not.toBeCalled()
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(0)
-    expect(createReviewRequestSpy.mock.calls[0][0].team_reviewers).toHaveLength(1)
-    expect(createReviewRequestSpy.mock.calls[0][0].team_reviewers[0]).toMatch(
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(0)
+    expect(requestReviewersSpy.mock.calls[0][0]?.team_reviewers).toHaveLength(1)
+    expect(requestReviewersSpy.mock.calls[0][0]?.team_reviewers?.[0]).toMatch(
       /team_reviewer/
     )
   })
 
   test('adds pr-creator as assignee if addAssignees is set to author', async () => {
     // MOCKS
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => { })
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
-    context.github.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => { })
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -169,19 +167,19 @@ describe('handlePullRequest', () => {
     await handlePullRequest(context)
 
     // THEN
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(1)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch('pr-creator')
-    expect(createReviewRequestSpy).not.toBeCalled()
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(1)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch('pr-creator')
+    expect(requestReviewersSpy).not.toBeCalled()
   })
 
   test('responds with error if addAssignees is not set to boolean or author', async () => {
     // MOCKS
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => { })
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    context.github.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => { })
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
 
     // GIVEN
@@ -194,7 +192,11 @@ describe('handlePullRequest', () => {
     try {
       await handlePullRequest(context)
     } catch (error) {
-      expect(error).toEqual(new Error("Error in configuration file to do with using addAssignees. Expected 'addAssignees' variable to be either boolean or 'author'"))
+      expect(error).toEqual(
+        new Error(
+          "Error in configuration file to do with using addAssignees. Expected 'addAssignees' variable to be either boolean or 'author'"
+        )
+      )
     }
   })
 
@@ -205,34 +207,32 @@ describe('handlePullRequest', () => {
         addReviewers: false,
         numberOfReviewers: 0,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3', 'pr-creator'],
-        skipKeywords: ['wip']
+        skipKeywords: ['wip'],
       }
     })
 
-    context.github.issues = {
-      // tslint:disable-next-line:no-empty
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = { 
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    context.github.pulls = {
-      // tslint:disable-next-line:no-empty
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(
-      context.github.pulls,
-      'createReviewRequest'
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
     )
 
     await handlePullRequest(context)
 
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(3)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/reviewer/)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toEqual(expect.arrayContaining([
-      'reviewer1', 'reviewer2', 'reviewer3'
-    ]))
-    expect(createReviewRequestSpy).not.toBeCalled()
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(3)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch(/reviewer/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toEqual(
+      expect.arrayContaining(['reviewer1', 'reviewer2', 'reviewer3'])
+    )
+    expect(requestReviewersSpy).not.toBeCalled()
   })
 
   test('adds assignees to pull requests if the assigness are enabled explicitly', async () => {
@@ -244,31 +244,31 @@ describe('handlePullRequest', () => {
         numberOfAssignees: 2,
         numberOfReviewers: 0,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
-        skipKeywords: ['wip']
+        skipKeywords: ['wip'],
       }
     })
 
-    context.github.issues = {
-      // tslint:disable-next-line:no-empty
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    context.github.pulls = {
-      // tslint:disable-next-line:no-empty
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(
-      context.github.pulls,
-      'createReviewRequest'
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
     )
 
     await handlePullRequest(context)
 
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(1)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toEqual(expect.arrayContaining(['assignee1']))
-    expect(createReviewRequestSpy).not.toBeCalled()
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(1)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toEqual(
+      expect.arrayContaining(['assignee1'])
+    )
+    expect(requestReviewersSpy).not.toBeCalled()
   })
 
   test('adds assignees to pull requests using the numberOfReviewers when numberOfAssignees is unspecified', async () => {
@@ -279,32 +279,30 @@ describe('handlePullRequest', () => {
         assignees: ['assignee1', 'assignee2', 'assignee3'],
         numberOfReviewers: 2,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
-        skipKeywords: ['wip']
+        skipKeywords: ['wip'],
       }
     })
 
-    context.github.issues = {
-      // tslint:disable-next-line:no-empty
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    context.github.pulls = {
-      // tslint:disable-next-line:no-empty
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(
-      context.github.pulls,
-      'createReviewRequest'
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
     )
 
     await handlePullRequest(context)
 
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(2)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/assignee/)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(2)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(2)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch(/assignee/)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(2)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(
       /reviewer/
     )
   })
@@ -316,30 +314,28 @@ describe('handlePullRequest', () => {
         addReviewers: true,
         numberOfReviewers: 0,
         reviewers: ['pr-creator'],
-        skipKeywords: ['wip']
+        skipKeywords: ['wip'],
       }
     })
 
-    context.github.issues = {
-      // tslint:disable-next-line:no-empty
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    context.github.pulls = {
-      // tslint:disable-next-line:no-empty
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
-    const createReviewRequestSpy = jest.spyOn(
-      context.github.pulls,
-      'createReviewRequest'
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
     )
 
     await handlePullRequest(context)
 
     expect(addAssigneesSpy).not.toHaveBeenCalled()
-    expect(createReviewRequestSpy).not.toHaveBeenCalled()
+    expect(requestReviewersSpy).not.toHaveBeenCalled()
   })
 
   test('adds assignees to pull requests if throws error to add reviewers', async () => {
@@ -350,27 +346,26 @@ describe('handlePullRequest', () => {
         assignees: ['maintainerX', 'maintainerY'],
         numberOfReviewers: 0,
         reviewers: ['reviewerA', 'reviewerB'],
-        skipKeywords: ['wip']
+        skipKeywords: ['wip'],
       }
     })
 
-    context.github.issues = {
-      // tslint:disable-next-line:no-empty
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => {
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {
         throw new Error('Review cannot be requested from pull request author.')
-      })
+      }),
     } as any
 
-    const spy = jest.spyOn(context.github.issues, 'addAssignees')
+    const spy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
     await handlePullRequest(context)
 
-    expect(spy.mock.calls[0][0].assignees).toHaveLength(2)
-    expect(spy.mock.calls[0][0].assignees[0]).toMatch(/maintainer/)
+    expect(spy.mock.calls[0][0]?.assignees).toHaveLength(2)
+    expect(spy.mock.calls[0][0]?.assignees?.[0]).toMatch(/maintainer/)
   })
 
   test('adds reviewers to pull requests if throws error to add assignees', async () => {
@@ -381,27 +376,26 @@ describe('handlePullRequest', () => {
         assignees: ['maintainerX', 'maintainerY'],
         numberOfReviewers: 0,
         reviewers: ['reviewerA', 'reviewerB'],
-        skipKeywords: ['wip']
+        skipKeywords: ['wip'],
       }
     })
 
-    context.github.issues = {
+    context.octokit.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {
         throw new Error('failed to add assignees.')
-      })
+      }),
     } as any
 
-    context.github.pulls = {
-      // tslint:disable-next-line:no-empty
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
 
-    const spy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const spy = jest.spyOn(context.octokit.pulls, 'requestReviewers')
 
     await handlePullRequest(context)
 
-    expect(spy.mock.calls[0][0].reviewers).toHaveLength(2)
-    expect(spy.mock.calls[0][0].reviewers[0]).toMatch(/reviewer/)
+    expect(spy.mock.calls[0][0]?.reviewers).toHaveLength(2)
+    expect(spy.mock.calls[0][0]?.reviewers?.[0]).toMatch(/reviewer/)
   })
 
   /*
@@ -424,84 +418,98 @@ describe('handlePullRequest', () => {
    */
   test('responds with the error if review groups are enabled, but no reviewGroups variable is defined in configuration', async () => {
     try {
-        // GIVEN
+      // GIVEN
       context.config = jest.fn().mockImplementation(async () => {
         return {
-          useReviewGroups: true
+          useReviewGroups: true,
         }
       })
 
-        // WHEN
+      // WHEN
       await handlePullRequest(context)
-
     } catch (error) {
-        // THEN
-      expect(error).toEqual(new Error('Error in configuration file to do with using review groups. Expected \'reviewGroups\' variable to be set because the variable \'useReviewGroups\' = true.'))
+      // THEN
+      expect(error).toEqual(
+        new Error(
+          "Error in configuration file to do with using review groups. Expected 'reviewGroups' variable to be set because the variable 'useReviewGroups' = true."
+        )
+      )
     }
   })
 
   test('responds with the error if assignee groups are enabled, but no assigneeGroups variable is defined in configuration', async () => {
     try {
-        // GIVEN
+      // GIVEN
       context.config = jest.fn().mockImplementation(async () => {
         return {
-          useAssigneeGroups: true
+          useAssigneeGroups: true,
         }
       })
 
-        // WHEN
+      // WHEN
       await handlePullRequest(context)
-
     } catch (error) {
-        // THEN
-      expect(error).toEqual(new Error('Error in configuration file to do with using review groups. Expected \'assigneeGroups\' variable to be set because the variable \'useAssigneeGroups\' = true.'))
+      // THEN
+      expect(error).toEqual(
+        new Error(
+          "Error in configuration file to do with using review groups. Expected 'assigneeGroups' variable to be set because the variable 'useAssigneeGroups' = true."
+        )
+      )
     }
   })
 
   test('adds reviewers to pull request from reviewers if groups are enabled and empty', async () => {
-      // MOCKS
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    // MOCKS
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
-    context.github.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
-      // GIVEN
+    // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
       return {
         addAssignees: false,
         addReviewers: true,
         useReviewGroups: true,
         numberOfReviewers: 1,
-        reviewers: ['reviewer1','reviewer2','reviewer3'],
-        reviewGroups: []
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+        reviewGroups: [],
       }
     })
 
-      // WHEN
+    // WHEN
     await handlePullRequest(context)
 
-      // THEN
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(1)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(/reviewer/)
+    // THEN
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(1)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(
+      /reviewer/
+    )
     expect(addAssigneesSpy).not.toBeCalled()
   })
 
   test('adds reviewers to pull request from two different groups if review groups are enabled', async () => {
     // MOCKS
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
-    context.github.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -511,9 +519,9 @@ describe('handlePullRequest', () => {
         useReviewGroups: true,
         numberOfReviewers: 1,
         reviewGroups: {
-          groupA: ['group1-user1','group1-user2','group1-user3'],
-          groupB: ['group2-user1', 'group2-user2','group2-user3']
-        }
+          groupA: ['group1-user1', 'group1-user2', 'group1-user3'],
+          groupB: ['group2-user1', 'group2-user2', 'group2-user3'],
+        },
       }
     })
 
@@ -521,23 +529,30 @@ describe('handlePullRequest', () => {
     await handlePullRequest(context)
 
     // THEN
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(2)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(/group1/)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[1]).toMatch(/group2/)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(2)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(
+      /group1/
+    )
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[1]).toMatch(
+      /group2/
+    )
     expect(addAssigneesSpy).not.toBeCalled()
   })
 
   test('adds all reviewers from a group that has less members than the number of reviews requested', async () => {
     // MOCKS
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
-    context.github.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -547,9 +562,9 @@ describe('handlePullRequest', () => {
         useReviewGroups: true,
         numberOfReviewers: 2,
         reviewGroups: {
-          groupA: ['group1-user1','group1-user2','group1-user3'],
-          groupB: ['group2-user1']
-        }
+          groupA: ['group1-user1', 'group1-user2', 'group1-user3'],
+          groupB: ['group2-user1'],
+        },
       }
     })
 
@@ -557,24 +572,33 @@ describe('handlePullRequest', () => {
     await handlePullRequest(context)
 
     // THEN
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(3)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(/group1/)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[1]).toMatch(/group1/)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[2]).toMatch(/group2-user1/)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(3)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(
+      /group1/
+    )
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[1]).toMatch(
+      /group1/
+    )
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[2]).toMatch(
+      /group2-user1/
+    )
     expect(addAssigneesSpy).not.toBeCalled()
   })
 
   test('adds assignees to pull request from two different groups if groups are enabled and number of assignees is specified', async () => {
     // MOCKS
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
-    context.github.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -584,12 +608,12 @@ describe('handlePullRequest', () => {
         useAssigneeGroups: true,
         numberOfAssignees: 1,
         numberOfReviewers: 2,
-        reviewers: ['reviewer1','reviewer2','reviewer3'],
+        reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
         assigneeGroups: {
-          groupA: ['group1-user1','group1-user2','group1-user3'],
+          groupA: ['group1-user1', 'group1-user2', 'group1-user3'],
           groupB: ['group2-user1'],
-          groupC: ['group3-user1','group3-user2','group3-user3']
-        }
+          groupC: ['group3-user1', 'group3-user2', 'group3-user3'],
+        },
       }
     })
 
@@ -597,24 +621,27 @@ describe('handlePullRequest', () => {
     await handlePullRequest(context)
 
     // THEN
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(3)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/group1/)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[1]).toMatch(/group2/)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[2]).toMatch(/group3/)
-    expect(createReviewRequestSpy).not.toBeCalled()
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(3)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch(/group1/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[1]).toMatch(/group2/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[2]).toMatch(/group3/)
+    expect(requestReviewersSpy).not.toBeCalled()
   })
 
   test('adds assignees to pull request from two different groups using numberOfReviewers if groups are enabled and number of assignees is not specified', async () => {
     // MOCKS
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => { })
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
-    context.github.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => { })
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -627,8 +654,8 @@ describe('handlePullRequest', () => {
         assigneeGroups: {
           groupA: ['group1-user1', 'group1-user2', 'group1-user3'],
           groupB: ['group2-user1'],
-          groupC: ['group3-user1', 'group3-user2', 'group3-user3']
-        }
+          groupC: ['group3-user1', 'group3-user2', 'group3-user3'],
+        },
       }
     })
 
@@ -636,24 +663,27 @@ describe('handlePullRequest', () => {
     await handlePullRequest(context)
 
     // THEN
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(3)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/group1/)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[1]).toMatch(/group2/)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[2]).toMatch(/group3/)
-    expect(createReviewRequestSpy).not.toBeCalled()
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(3)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch(/group1/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[1]).toMatch(/group2/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[2]).toMatch(/group3/)
+    expect(requestReviewersSpy).not.toBeCalled()
   })
 
   test('adds assignees to pull request from two different groups and reviewers are not specified', async () => {
     // MOCKS
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
-    context.github.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -664,10 +694,10 @@ describe('handlePullRequest', () => {
         numberOfAssignees: 1,
         numberOfReviewers: 2,
         assigneeGroups: {
-          groupA: ['group1-user1','group1-user2','group1-user3'],
+          groupA: ['group1-user1', 'group1-user2', 'group1-user3'],
           groupB: ['group2-user1'],
-          groupC: ['group3-user1','group3-user2','group3-user3']
-        }
+          groupC: ['group3-user1', 'group3-user2', 'group3-user3'],
+        },
       }
     })
 
@@ -675,24 +705,27 @@ describe('handlePullRequest', () => {
     await handlePullRequest(context)
 
     // THEN
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(3)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/group1/)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[1]).toMatch(/group2/)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[2]).toMatch(/group3/)
-    expect(createReviewRequestSpy).not.toBeCalled()
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(3)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch(/group1/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[1]).toMatch(/group2/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[2]).toMatch(/group3/)
+    expect(requestReviewersSpy).not.toBeCalled()
   })
 
   test('adds normal reviewers and assignees from groups into the pull request', async () => {
     // MOCKS
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
-    context.github.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -704,10 +737,10 @@ describe('handlePullRequest', () => {
         numberOfReviewers: 2,
         reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
         assigneeGroups: {
-          groupA: ['group1-user1','group1-user2','group1-user3'],
+          groupA: ['group1-user1', 'group1-user2', 'group1-user3'],
           groupB: ['group2-user1'],
-          groupC: ['group3-user1','group3-user2','group3-user3']
-        }
+          groupC: ['group3-user1', 'group3-user2', 'group3-user3'],
+        },
       }
     })
 
@@ -715,27 +748,34 @@ describe('handlePullRequest', () => {
     await handlePullRequest(context)
 
     // THEN
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(3)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/group1/)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[1]).toMatch(/group2/)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[2]).toMatch(/group3/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(3)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch(/group1/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[1]).toMatch(/group2/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[2]).toMatch(/group3/)
 
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(2)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(/reviewer/)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[1]).toMatch(/reviewer/)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(2)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(
+      /reviewer/
+    )
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[1]).toMatch(
+      /reviewer/
+    )
   })
 
   test('adds normal assignees and reviewers from groups into the pull request', async () => {
     // MOCKS
-    context.github.pulls = {
-      createReviewRequest: jest.fn().mockImplementation(async () => {})
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
     } as any
-    const createReviewRequestSpy = jest.spyOn(context.github.pulls, 'createReviewRequest')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
-    context.github.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {})
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
-    const addAssigneesSpy = jest.spyOn(context.github.issues, 'addAssignees')
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -747,10 +787,10 @@ describe('handlePullRequest', () => {
         numberOfReviewers: 2,
         assignees: ['assignee1', 'assignee2', 'assignee3'],
         reviewGroups: {
-          groupA: ['group1-reviewer1','group1-reviewer2','group1-reviewer3'],
+          groupA: ['group1-reviewer1', 'group1-reviewer2', 'group1-reviewer3'],
           groupB: ['group2-reviewer1'],
-          groupC: ['group3-reviewer1','group3-reviewer2','group3-reviewer3']
-        }
+          groupC: ['group3-reviewer1', 'group3-reviewer2', 'group3-reviewer3'],
+        },
       }
     })
 
@@ -758,12 +798,18 @@ describe('handlePullRequest', () => {
     await handlePullRequest(context)
 
     // THEN
-    expect(addAssigneesSpy.mock.calls[0][0].assignees).toHaveLength(1)
-    expect(addAssigneesSpy.mock.calls[0][0].assignees[0]).toMatch(/assignee/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(1)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch(/assignee/)
 
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers).toHaveLength(5)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[0]).toMatch(/group1-reviewer/)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[2]).toMatch(/group2-reviewer/)
-    expect(createReviewRequestSpy.mock.calls[0][0].reviewers[3]).toMatch(/group3-reviewer/)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(5)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(
+      /group1-reviewer/
+    )
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[2]).toMatch(
+      /group2-reviewer/
+    )
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[3]).toMatch(
+      /group3-reviewer/
+    )
   })
 })

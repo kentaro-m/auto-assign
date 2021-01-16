@@ -9,7 +9,7 @@ interface ChooseUsersResponse {
 export function chooseUsers(
   candidates: string[],
   desiredNumber: number,
-  filterUser: string = ''
+  filterUser = ''
 ): ChooseUsersResponse {
   const { teams, users } = candidates.reduce(
     (acc: ChooseUsersResponse, reviewer: string): ChooseUsersResponse => {
@@ -25,7 +25,7 @@ export function chooseUsers(
     },
     {
       teams: [],
-      users: []
+      users: [],
     }
   )
 
@@ -33,13 +33,13 @@ export function chooseUsers(
   if (desiredNumber === 0) {
     return {
       teams,
-      users
+      users,
     }
   }
 
   return {
     teams,
-    users: _.sampleSize(users, desiredNumber)
+    users: _.sampleSize(users, desiredNumber),
   }
 }
 
@@ -75,8 +75,7 @@ export function chooseReviewers(
 
     return {
       reviewers: chosenReviewers,
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      team_reviewers: []
+      team_reviewers: [],
     }
   }
 
@@ -84,8 +83,7 @@ export function chooseReviewers(
 
   return {
     reviewers: chosenReviewers.users,
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    team_reviewers: chosenReviewers.teams
+    team_reviewers: chosenReviewers.teams,
   }
 }
 
@@ -97,7 +95,7 @@ export function chooseAssignees(owner: string, config: Config): string[] {
     numberOfAssignees,
     numberOfReviewers,
     assignees,
-    reviewers
+    reviewers,
   } = config
   let chosenAssignees: string[] = []
 
