@@ -30,7 +30,7 @@ export async function handlePullRequest(context: Context): Promise<void> {
     useAssigneeGroups,
     assigneeGroups,
     addReviewers,
-    addAssignees
+    addAssignees,
   } = config
 
   if (skipKeywords && includesSkipKeywords(title, skipKeywords)) {
@@ -58,12 +58,9 @@ export async function handlePullRequest(context: Context): Promise<void> {
 
   if (addReviewers) {
     try {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       const { reviewers, team_reviewers } = chooseReviewers(owner, config)
 
-      // eslint-disable-next-line @typescript-eslint/camelcase
       if (reviewers.length > 0 || team_reviewers.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         const params = context.pullRequest({ reviewers, team_reviewers })
         const result = await context.octokit.pulls.requestReviewers(params)
         context.log(result)
