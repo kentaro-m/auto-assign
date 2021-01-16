@@ -101,9 +101,9 @@ describe('handlePullRequest', () => {
     expect(addAssigneesSpy).not.toBeCalled()
     expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(3)
     expect(requestReviewersSpy.mock.calls[0][0]?.team_reviewers).toHaveLength(0)
-    // expect(requestReviewersSpy.mock.calls[0][0]?.reviewers[0]).toMatch(
-    //   /reviewer/
-    // )
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(
+      /reviewer/
+    )
   })
 
   test('adds team_reviewers to pull requests if the configuration is enabled, but no assignees', async () => {
@@ -136,9 +136,9 @@ describe('handlePullRequest', () => {
     expect(addAssigneesSpy).not.toBeCalled()
     expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(0)
     expect(requestReviewersSpy.mock.calls[0][0]?.team_reviewers).toHaveLength(1)
-    // expect(requestReviewersSpy.mock.calls[0][0].team_reviewers[0]).toMatch(
-    //   /team_reviewer/
-    // )
+    expect(requestReviewersSpy.mock.calls[0][0]?.team_reviewers?.[0]).toMatch(
+      /team_reviewer/
+    )
   })
 
   test('adds pr-creator as assignee if addAssignees is set to author', async () => {
@@ -168,7 +168,7 @@ describe('handlePullRequest', () => {
 
     // THEN
     expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(1)
-    // expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch('pr-creator')
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch('pr-creator')
     expect(requestReviewersSpy).not.toBeCalled()
   })
 
