@@ -1,5 +1,4 @@
 import { Context } from 'probot'
-import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types'
 import { handlePullRequest } from '../src/handler'
 
 describe('handlePullRequest', () => {
