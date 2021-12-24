@@ -1,8 +1,4 @@
 # Probot: Auto Assign
-[![Actions Status](https://action-badges.now.sh/kentaro-m/auto-assign)](https://github.com/kentaro-m/auto-assign/actions)
-[![Coverage Status](https://coveralls.io/repos/github/kentaro-m/auto-assign/badge.svg?branch=master)](https://coveralls.io/github/kentaro-m/auto-assign?branch=master)
-[![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/auto-assign)
-
 > A GitHub App built with [Probot](https://github.com/probot/probot) that adds reviewers/assignees to pull requests when pull requests are opened.
 
 ![screenshot](./public/assets/screenshots/screenshot.png)
