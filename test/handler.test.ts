@@ -211,7 +211,7 @@ describe('handlePullRequest', () => {
       }
     })
 
-    context.octokit.issues = { 
+    context.octokit.issues = {
       addAssignees: jest.fn().mockImplementation(async () => {}),
     } as any
 
@@ -741,6 +741,7 @@ describe('handlePullRequest', () => {
           groupB: ['group2-user1'],
           groupC: ['group3-user1', 'group3-user2', 'group3-user3'],
         },
+        skipUsers: ['other-user'],
       }
     })
 
@@ -811,5 +812,23 @@ describe('handlePullRequest', () => {
     expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[3]).toMatch(
       /group3-reviewer/
     )
+  })
+
+  test('skips for listed users', async () => {
+    // MOCKS
+    const spy = jest.spyOn(context, 'log')
+
+    // GIVEN
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        skipUsers: ['pr-creator'],
+      }
+    })
+
+    // WHEN
+    await handlePullRequest(context)
+
+    // THEN
+    expect(spy.mock.calls[0][0]).toEqual('ignore for user pr-creator')
   })
 })

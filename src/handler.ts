@@ -13,6 +13,7 @@ export interface Config {
   useAssigneeGroups: boolean
   reviewGroups: { [key: string]: string[] }
   assigneeGroups: { [key: string]: string[] }
+  skipUsers: string[]
 }
 
 export async function handlePullRequest(context: Context): Promise<void> {
@@ -31,6 +32,7 @@ export async function handlePullRequest(context: Context): Promise<void> {
     assigneeGroups,
     addReviewers,
     addAssignees,
+    skipUsers,
   } = config
 
   if (skipKeywords && includesSkipKeywords(title, skipKeywords)) {
@@ -55,6 +57,11 @@ export async function handlePullRequest(context: Context): Promise<void> {
   }
 
   const owner = context.payload.pull_request.user.login
+
+  if (skipUsers && skipUsers.includes(owner)) {
+    context.log(`ignore for user ${owner}`)
+    return
+  }
 
   if (addReviewers) {
     try {
