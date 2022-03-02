@@ -815,8 +815,21 @@ describe('handlePullRequest', () => {
   })
 
   test('skips for listed users', async () => {
-    // MOCKS
+    // MOCKS and STUBS
     const spy = jest.spyOn(context, 'log')
+
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
+    } as any
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
+
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
+    } as any
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
     // GIVEN
     context.config = jest.fn().mockImplementation(async () => {
@@ -830,5 +843,7 @@ describe('handlePullRequest', () => {
 
     // THEN
     expect(spy.mock.calls[0][0]).toEqual('ignore for user pr-creator')
+    expect(requestReviewersSpy).not.toBeCalled()
+    expect(addAssigneesSpy).not.toBeCalled()
   })
 })
