@@ -45,6 +45,10 @@ numberOfReviewers: 0
 # A list of keywords to be skipped the process that add reviewers if pull requests include it
 # skipKeywords:
 #   - wip
+
+# A list of users to be skipped by both the add reviewers and add assignees processes
+# skipUsers:
+#   - dependabot[bot]
 ```
 
 #### Add Github Team to Single Reviewers List
