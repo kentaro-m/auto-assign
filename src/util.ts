@@ -113,13 +113,13 @@ export function chooseAssignees(owner: string, config: Config): string[] {
     chosenAssignees = chooseUsersFromGroups(
       owner,
       assigneeGroups,
-      numberOfAssignees || numberOfReviewers
+      numberOfAssignees ?? numberOfReviewers
     )
   } else {
     const candidates = assignees ? assignees : reviewers
     chosenAssignees = chooseUsers(
       candidates,
-      numberOfAssignees || numberOfReviewers,
+      numberOfAssignees ?? numberOfReviewers,
       owner
     ).users
   }
