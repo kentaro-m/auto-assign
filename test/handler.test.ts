@@ -398,6 +398,35 @@ describe('handlePullRequest', () => {
     expect(spy.mock.calls[0][0]?.reviewers?.[0]).toMatch(/reviewer/)
   })
 
+  test('adds all assingnees to pull requests when 0 is set to numberOfAssignees', async () => {
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: true,
+        addReviewers: true,
+        numberOfAssignees: 0,
+        assignees: ['assigneeA', 'assigneeB'],
+        numberOfReviewers: 1,
+        reviewers: ['reviewerA', 'reviewerB', 'reviewerC'],
+      }
+    })
+
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
+    } as any
+
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
+    } as any
+
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
+    const requestReviewersSpy = jest.spyOn(context.octokit.pulls, 'requestReviewers')
+
+    await handlePullRequest(context)
+
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(2)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(1)
+  })
+
   /*
    * If 'useReviewGroups' == true, then use the 'groups' object to select reviewers and assignees.
    * The new functionality will still decide to add reviewers and assignees based on the 'addReviewers'
@@ -812,6 +841,58 @@ describe('handlePullRequest', () => {
     expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[3]).toMatch(
       /group3-reviewer/
     )
+  })
+
+  test('adds all assingnees from groups to pull requests when 0 is set to numberOfAssignees', async () => {
+    // MOCKS
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => {}),
+    } as any
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
+
+    context.octokit.issues = {
+      addAssignees: jest.fn().mockImplementation(async () => {}),
+    } as any
+    const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
+
+    // GIVEN
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addAssignees: true,
+        addReviewers: true,
+        useAssigneeGroups: true,
+        useReviewGroups: true,
+        numberOfAssignees: 0,
+        numberOfReviewers: 1,
+        reviewGroups: {
+          groupA: ['group1-reviewer1', 'group1-reviewer2', 'group1-reviewer3'],
+          groupB: ['group2-reviewer1'],
+          groupC: ['group3-reviewer1', 'group3-reviewer2', 'group3-reviewer3'],
+        },
+        assigneeGroups: {
+          groupA: ['group1-user1', 'group1-user2'],
+          groupB: ['group2-user1'],
+          groupC: ['group3-user1', 'group3-user2'],
+        },
+      }
+    })
+
+    // WHEN
+    await handlePullRequest(context)
+
+    // THEN
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(5)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch(/group1/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[2]).toMatch(/group2/)
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[3]).toMatch(/group3/)
+
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(3)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(/group1/)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[1]).toMatch(/group2/)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[2]).toMatch(/group3/)
   })
 
   test('skips for listed users', async () => {
