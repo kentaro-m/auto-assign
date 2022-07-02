@@ -25,6 +25,3 @@ jobs:
 
       - name: lint
         run: npm run lint
-
-      - name: audit
-        run: npm audit
