@@ -90,7 +90,11 @@ numberOfReviewers: 0
 
 >Note: This feature is not enabled in the hosted app below.  
 https://github.com/apps/auto-assign  
-To enable the team assignment, you need to host your own app and change the permission that the app can read the organization's team.  
+To enable the team assignment, you need to host your own app and change the permission below that the app can read the organization's team.  
+- Repository permissions
+  - `Administration` - `Read-Only`
+- Organization permissions
+  - `Members` - `Read-Only`
 
 ### Multiple Reviewers List
 Add reviewers/assignees to the pull request based on multiple reviewers list.
