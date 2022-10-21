@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:19
 
 LABEL "com.github.actions.name"="Auto Assign"
 LABEL "com.github.actions.description"="Add reviewers/assignees to pull requests when pull requests are opened."
