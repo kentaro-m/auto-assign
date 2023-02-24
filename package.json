@@ -18,20 +18,9 @@
     "start": "npm run build && probot run ./lib/index.js",
     "lint": "eslint src/**/*.ts",
     "test": "jest",
-    "precommit": "lint-staged",
     "coverage": "jest --coverage",
-    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "src/**/*.ts": [
-      "npm run lint -- --fix",
-      "git add"
-    ]
+    "test:watch": "jest --watch --notify --notifyMode=change --coverage",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@octokit/webhooks": "7.24.3",
@@ -50,9 +39,9 @@
     "eslint-plugin-prettier": "3.4.1",
     "husky": "8.0.3",
     "jest": "27.5.1",
-    "lint-staged": "13.1.0",
+    "lint-staged": "13.1.2",
     "nodemon": "2.0.20",
-    "prettier": "2.8.3",
+    "prettier": "2.8.4",
     "smee-client": "1.2.3",
     "ts-jest": "27.1.5"
   },
@@ -63,5 +52,8 @@
     "env": [
       "jest"
     ]
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache --fix"
   }
 }
