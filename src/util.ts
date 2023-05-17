@@ -30,7 +30,7 @@ export function chooseUsers(
   )
 
   // all-assign
-  if (desiredNumber === 0) {
+  if (!desiredNumber) {
     return {
       teams,
       users,
