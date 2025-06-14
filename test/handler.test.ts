@@ -2,6 +2,7 @@ import { Context } from 'probot'
 import { handlePullRequest } from '../src/handler'
 
 describe('handlePullRequest', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let event: any
   let context: Context
 
@@ -29,7 +30,36 @@ describe('handlePullRequest', () => {
       draft: false,
     }
 
-    context = new Context(event, {} as any, {} as any)
+    const mockOctokit = {
+      issues: { addAssignees: jest.fn() },
+      pulls: { requestReviewers: jest.fn() },
+      hook: {
+        before: jest.fn(),
+        after: jest.fn(),
+        wrap: jest.fn(),
+        remove: jest.fn(),
+      },
+      rest: {
+        issues: { addAssignees: jest.fn() },
+        pulls: { requestReviewers: jest.fn() },
+      },
+    }
+    const mockLogger = {
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+      trace: jest.fn(),
+      fatal: jest.fn(),
+    }
+
+    context = new Context<
+      'pull_request.opened' | 'pull_request.ready_for_review'
+    >(
+      event, // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mockOctokit as any, // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mockLogger as any
+    )
 
     context.config = jest.fn().mockImplementation(async () => {
       return {
@@ -40,13 +70,11 @@ describe('handlePullRequest', () => {
         skipKeywords: ['wip'],
       }
     })
-
-    context.log = jest.fn() as any
   })
 
   test('responds with the error if the configuration file failed to load', async () => {
     try {
-      context.config = jest.fn().mockImplementation(async () => {})
+      context.config = jest.fn().mockImplementation(async () => undefined)
       await handlePullRequest(context)
     } catch (error) {
       expect(error).toEqual(new Error('the configuration file failed to load'))
@@ -54,7 +82,7 @@ describe('handlePullRequest', () => {
   })
 
   test('exits the process if pull requests include skip words in the title', async () => {
-    const spy = jest.spyOn(context, 'log')
+    const spy = jest.spyOn(context.log, 'info')
 
     event.payload.pull_request.title = 'wip test'
     await handlePullRequest(context)
@@ -63,7 +91,7 @@ describe('handlePullRequest', () => {
   })
 
   test('skips drafts', async () => {
-    const spy = jest.spyOn(context, 'log')
+    const spy = jest.spyOn(context.log, 'info')
 
     event.payload.pull_request.draft = true
     await handlePullRequest(context)
@@ -83,11 +111,13 @@ describe('handlePullRequest', () => {
     })
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
@@ -118,11 +148,13 @@ describe('handlePullRequest', () => {
     })
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
@@ -144,7 +176,8 @@ describe('handlePullRequest', () => {
   test('adds pr-creator as assignee if addAssignees is set to author', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
@@ -152,7 +185,8 @@ describe('handlePullRequest', () => {
     )
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
@@ -168,18 +202,22 @@ describe('handlePullRequest', () => {
 
     // THEN
     expect(addAssigneesSpy.mock.calls[0][0]?.assignees).toHaveLength(1)
-    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch('pr-creator')
+    expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[0]).toMatch(
+      'pr-creator'
+    )
     expect(requestReviewersSpy).not.toBeCalled()
   })
 
   test('responds with error if addAssignees is not set to boolean or author', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     // GIVEN
@@ -212,11 +250,13 @@ describe('handlePullRequest', () => {
     })
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
@@ -249,11 +289,13 @@ describe('handlePullRequest', () => {
     })
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
@@ -284,11 +326,13 @@ describe('handlePullRequest', () => {
     })
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
@@ -319,11 +363,13 @@ describe('handlePullRequest', () => {
     })
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
@@ -351,13 +397,15 @@ describe('handlePullRequest', () => {
     })
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     context.octokit.pulls = {
       requestReviewers: jest.fn().mockImplementation(async () => {
         throw new Error('Review cannot be requested from pull request author.')
       }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     const spy = jest.spyOn(context.octokit.issues, 'addAssignees')
@@ -384,10 +432,12 @@ describe('handlePullRequest', () => {
       addAssignees: jest.fn().mockImplementation(async () => {
         throw new Error('failed to add assignees.')
       }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     const spy = jest.spyOn(context.octokit.pulls, 'requestReviewers')
@@ -411,15 +461,20 @@ describe('handlePullRequest', () => {
     })
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
 
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
-    const requestReviewersSpy = jest.spyOn(context.octokit.pulls, 'requestReviewers')
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
 
     await handlePullRequest(context)
 
@@ -490,7 +545,8 @@ describe('handlePullRequest', () => {
   test('adds reviewers to pull request from reviewers if groups are enabled and empty', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
@@ -498,7 +554,8 @@ describe('handlePullRequest', () => {
     )
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
@@ -528,7 +585,8 @@ describe('handlePullRequest', () => {
   test('adds reviewers to pull request from two different groups if review groups are enabled', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
@@ -536,7 +594,8 @@ describe('handlePullRequest', () => {
     )
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
@@ -571,7 +630,8 @@ describe('handlePullRequest', () => {
   test('adds all reviewers from a group that has less members than the number of reviews requested', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
@@ -579,7 +639,8 @@ describe('handlePullRequest', () => {
     )
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
@@ -617,7 +678,8 @@ describe('handlePullRequest', () => {
   test('adds assignees to pull request from two different groups if groups are enabled and number of assignees is specified', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
@@ -625,7 +687,8 @@ describe('handlePullRequest', () => {
     )
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
@@ -660,7 +723,8 @@ describe('handlePullRequest', () => {
   test('adds assignees to pull request from two different groups using numberOfReviewers if groups are enabled and number of assignees is not specified', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
@@ -668,7 +732,8 @@ describe('handlePullRequest', () => {
     )
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
@@ -702,7 +767,8 @@ describe('handlePullRequest', () => {
   test('adds assignees to pull request from two different groups and reviewers are not specified', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
@@ -710,7 +776,8 @@ describe('handlePullRequest', () => {
     )
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
@@ -744,7 +811,8 @@ describe('handlePullRequest', () => {
   test('adds normal reviewers and assignees from groups into the pull request', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
@@ -752,7 +820,8 @@ describe('handlePullRequest', () => {
     )
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
@@ -795,7 +864,8 @@ describe('handlePullRequest', () => {
   test('adds normal assignees and reviewers from groups into the pull request', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
@@ -803,7 +873,8 @@ describe('handlePullRequest', () => {
     )
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
@@ -846,7 +917,8 @@ describe('handlePullRequest', () => {
   test('adds all assingnees from groups to pull requests when 0 is set to numberOfAssignees', async () => {
     // MOCKS
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
@@ -854,7 +926,8 @@ describe('handlePullRequest', () => {
     )
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
@@ -890,22 +963,30 @@ describe('handlePullRequest', () => {
     expect(addAssigneesSpy.mock.calls[0][0]?.assignees?.[3]).toMatch(/group3/)
 
     expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toHaveLength(3)
-    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(/group1/)
-    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[1]).toMatch(/group2/)
-    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[2]).toMatch(/group3/)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[0]).toMatch(
+      /group1/
+    )
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[1]).toMatch(
+      /group2/
+    )
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers?.[2]).toMatch(
+      /group3/
+    )
   })
 
   test('skips for listed users', async () => {
     // MOCKS and STUBS
-    const spy = jest.spyOn(context, 'log')
+    const spy = jest.spyOn(context.log, 'info')
 
     context.octokit.issues = {
-      addAssignees: jest.fn().mockImplementation(async () => {}),
+      addAssignees: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const addAssigneesSpy = jest.spyOn(context.octokit.issues, 'addAssignees')
 
     context.octokit.pulls = {
-      requestReviewers: jest.fn().mockImplementation(async () => {}),
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
     const requestReviewersSpy = jest.spyOn(
       context.octokit.pulls,
