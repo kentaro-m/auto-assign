@@ -73,7 +73,9 @@ export async function handlePullRequest(context: Context): Promise<void> {
         context.log(result)
       }
     } catch (error) {
-      context.log(error)
+      if (error instanceof Error) {
+        context.log(error)
+      }
     }
   }
 
@@ -87,7 +89,9 @@ export async function handlePullRequest(context: Context): Promise<void> {
         context.log(result)
       }
     } catch (error) {
-      context.log(error)
+      if (error instanceof Error) {
+        context.log(error)
+      }
     }
   }
 }
