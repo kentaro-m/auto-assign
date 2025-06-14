@@ -45,9 +45,6 @@
     "smee-client": "1.2.5",
     "ts-jest": "29.1.1"
   },
-  "engines": {
-    "node": "14.x"
-  },
   "standard": {
     "env": [
       "jest"
