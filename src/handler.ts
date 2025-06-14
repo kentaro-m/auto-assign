@@ -1,6 +1,10 @@
 import { Context } from 'probot'
 import { includesSkipKeywords, chooseAssignees, chooseReviewers } from './util'
 
+type PullRequestContext = Context<
+  'pull_request.opened' | 'pull_request.ready_for_review'
+>
+
 export interface Config {
   addReviewers: boolean
   addAssignees: boolean
@@ -16,7 +20,9 @@ export interface Config {
   skipUsers: string[]
 }
 
-export async function handlePullRequest(context: Context): Promise<void> {
+export async function handlePullRequest(
+  context: PullRequestContext
+): Promise<void> {
   const config = (await context.config('auto_assign.yml')) as Config
 
   if (!config) {
@@ -36,11 +42,11 @@ export async function handlePullRequest(context: Context): Promise<void> {
   } = config
 
   if (skipKeywords && includesSkipKeywords(title, skipKeywords)) {
-    context.log('skips adding reviewers')
+    context.log.info('skips adding reviewers')
     return
   }
   if (context.payload.pull_request.draft) {
-    context.log('ignore draft PR')
+    context.log.info('ignore draft PR')
     return
   }
 
@@ -59,7 +65,7 @@ export async function handlePullRequest(context: Context): Promise<void> {
   const owner = context.payload.pull_request.user.login
 
   if (skipUsers && skipUsers.includes(owner)) {
-    context.log(`ignore for user ${owner}`)
+    context.log.info(`ignore for user ${owner}`)
     return
   }
 
@@ -70,11 +76,11 @@ export async function handlePullRequest(context: Context): Promise<void> {
       if (reviewers.length > 0 || team_reviewers.length > 0) {
         const params = context.pullRequest({ reviewers, team_reviewers })
         const result = await context.octokit.pulls.requestReviewers(params)
-        context.log(result)
+        context.log.info(result)
       }
     } catch (error) {
       if (error instanceof Error) {
-        context.log(error)
+        context.log.error(error)
       }
     }
   }
@@ -86,11 +92,11 @@ export async function handlePullRequest(context: Context): Promise<void> {
       if (assignees.length > 0) {
         const params = context.issue({ assignees })
         const result = await context.octokit.issues.addAssignees(params)
-        context.log(result)
+        context.log.info(result)
       }
     } catch (error) {
       if (error instanceof Error) {
-        context.log(error)
+        context.log.error(error)
       }
     }
   }
