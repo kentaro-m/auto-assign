@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/github/webhooks/index.js": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "NODEJS_HELPERS": "0"
+  }
+}

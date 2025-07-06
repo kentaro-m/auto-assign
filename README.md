@@ -185,7 +185,42 @@ See [Contributing](#contributing) for more information about making improvements
 
 ## Deploy
 
-### Glitch
+This app can be deployed in two ways:
+- **Node.js App**: Traditional server-based deployment (Glitch, Heroku, etc.)
+- **Serverless Function**: Function-as-a-Service deployment (Vercel, Netlify, etc.)
+
+### Serverless Function
+
+#### Vercel
+
+1. [Configure a new app on GitHub](https://github.com/settings/apps/new).
+   * For the Homepage URL, use your repository URL: `https://github.com/your-username/your-repo`
+   * For the Webhook URL, use: `https://your-vercel-domain.vercel.app/api/github/webhooks`
+   * Generate a Webhook Secret with `openssl rand -base64 32` and save it
+   * On the **Permissions & webhooks** tab, add read/write permissions for pull requests
+   * On the **Permissions & webhooks** tab, subscribe to **Pull request** events
+   * Save your changes and download the private key
+
+2. Deploy to Vercel:
+   * Connect your GitHub repository to Vercel
+   * Set the following environment variables in Vercel dashboard:
+     ```
+     APP_ID=your_github_app_id
+     WEBHOOK_SECRET=your_webhook_secret
+     PRIVATE_KEY=your_private_key_content
+     ```
+   * Deploy the app
+
+3. Install the GitHub App:
+   * Go to your GitHub App settings
+   * Click the **Install** tab
+   * Install the app to your repositories
+
+The serverless function will automatically handle GitHub webhook events at `/api/github/webhooks`.
+
+### Node.js App
+
+#### Glitch
 
 [![Remix on Glitch](https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg)](https://glitch.com/edit/#!/import/github/kentaro-m/auto-assign)
 
