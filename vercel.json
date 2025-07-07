@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/github/webhooks/index.js": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "NODEJS_HELPERS": "0"
+  },
+  "rewrites": [
+    { "source": "/", "destination": "/api/github/webhooks" }
+  ]
+}
