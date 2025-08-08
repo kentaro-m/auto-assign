@@ -43,7 +43,7 @@
     "nodemon": "2.0.22",
     "prettier": "2.8.8",
     "smee-client": "1.2.5",
-    "ts-jest": "29.4.0"
+    "ts-jest": "29.4.1"
   },
   "standard": {
     "env": [
