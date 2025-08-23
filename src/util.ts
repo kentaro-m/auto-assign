@@ -62,7 +62,13 @@ export function chooseReviewers(
   reviewers: string[]
   team_reviewers: string[]
 } {
-  const { useReviewGroups, reviewGroups, numberOfReviewers, reviewers } = config
+  const {
+    useReviewGroups,
+    reviewGroups,
+    numberOfReviewers,
+    reviewers,
+    teamReviewers: team_reviewers,
+  } = config
   const useGroups: boolean =
     useReviewGroups && Object.keys(reviewGroups).length > 0
 
@@ -79,11 +85,21 @@ export function chooseReviewers(
     }
   }
 
-  const chosenReviewers = chooseUsers(reviewers, numberOfReviewers, owner)
+  // Filter out the owner from individual reviewers
+  const filteredReviewers = reviewers
+    ? reviewers.filter((reviewer) => reviewer !== owner)
+    : []
 
+  // Choose individual reviewers
+  const chosenIndividualReviewers =
+    numberOfReviewers > 0
+      ? _.sampleSize(filteredReviewers, numberOfReviewers)
+      : filteredReviewers
+
+  // Return both individual reviewers and team reviewers
   return {
-    reviewers: chosenReviewers.users,
-    team_reviewers: chosenReviewers.teams,
+    reviewers: chosenIndividualReviewers,
+    team_reviewers: team_reviewers || [],
   }
 }
 
