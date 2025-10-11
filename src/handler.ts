@@ -7,7 +7,7 @@ type PullRequestContext = Context<
 
 export interface Config {
   addReviewers: boolean
-  addAssignees: boolean
+  addAssignees: boolean | 'author'
   reviewers: string[]
   assignees: string[]
   numberOfAssignees: number
