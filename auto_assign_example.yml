@@ -1,0 +1,42 @@
+# Configuration example for auto-assign with separate team_reviewers
+
+# Set to true to add reviewers to pull requests
+addReviewers: true
+
+# Set to true to add assignees to pull requests
+addAssignees: false
+
+# A list of individual reviewers to be added to pull requests (GitHub user name)
+reviewers:
+  - reviewerA
+  - reviewerB
+  - reviewerC
+
+# A list of team reviewers to be added to pull requests (GitHub team slug)
+# Teams can be specified with or without the org prefix
+team_reviewers:
+  - frontend-team
+  - backend-team
+  - org/security-team
+
+# A number of individual reviewers added to the pull request
+# Set 0 to add all the reviewers (default: 0)
+# Note: This only affects individual reviewers, not team reviewers
+numberOfReviewers: 2
+
+# A list of assignees, overrides reviewers if set
+# assignees:
+#   - assigneeA
+
+# A number of assignees to add to the pull request
+# Set to 0 to add all of the assignees.
+# Uses numberOfReviewers if unset.
+# numberOfAssignees: 2
+
+# A list of keywords to be skipped the process that add reviewers if pull requests include it
+# skipKeywords:
+#   - wip
+
+# A list of users to be skipped by both the add reviewers and add assignees processes
+# skipUsers:
+#   - dependabot[bot]
