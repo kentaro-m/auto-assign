@@ -29,8 +29,15 @@ reviewers:
   - reviewerB
   - reviewerC
 
+# A list of team reviewers to be added to pull requests (GitHub team slug)
+team_reviewers:
+  - org/teamReviewerA
+  - org/teamReviewerB
+  - teamReviewerC
+
 # A number of reviewers added to the pull request
 # Set 0 to add all the reviewers (default: 0)
+# Note: This only affects individual reviewers, not team reviewers
 numberOfReviewers: 0
 
 # A list of assignees, overrides reviewers if set

@@ -1,4 +1,9 @@
-import { chooseUsers, chooseUsersFromGroups, includesSkipKeywords } from '../src/util'
+import {
+  chooseUsers,
+  chooseUsersFromGroups,
+  chooseReviewers,
+  includesSkipKeywords,
+} from '../src/util'
 
 describe('chooseUsers', () => {
   test('returns the reviewer list without the PR creator', () => {
@@ -98,13 +103,8 @@ describe('chooseUsersFromGroups', () => {
     // GIVEN
     const owner = 'owner'
     const reviewers = {
-      groupA: [
-        'owner',
-        'reviewer1'
-      ],
-      groupB: [
-        'reviewer2'
-      ]
+      groupA: ['owner', 'reviewer1'],
+      groupB: ['reviewer2'],
     }
     const numberOfReviewers = 1
 
@@ -119,12 +119,8 @@ describe('chooseUsersFromGroups', () => {
     // GIVEN
     const owner = 'owner'
     const reviewers = {
-      groupA: [
-        'owner'
-      ],
-      groupB: [
-        'reviewer2'
-      ]
+      groupA: ['owner'],
+      groupB: ['reviewer2'],
     }
     const numberOfReviewers = 1
 
@@ -140,20 +136,10 @@ describe('chooseUsersFromGroups', () => {
     // GIVEN
     const owner = 'owner'
     const reviewers = {
-      groupA: [
-        'owner',
-        'groupA-1',
-        'groupA-2'
-      ],
-      groupB: [
-        'groupB-1',
-        'groupB-2'
-      ],
+      groupA: ['owner', 'groupA-1', 'groupA-2'],
+      groupB: ['groupB-1', 'groupB-2'],
       groupC: [],
-      groupD: [
-        'groupD-1',
-        'groupD-2'
-      ]
+      groupD: ['groupD-1', 'groupD-2'],
     }
     const numberOfReviewers = 1
 
@@ -171,11 +157,8 @@ describe('chooseUsersFromGroups', () => {
     // GIVEN
     const owner = 'owner'
     const reviewers = {
-      groupA: [
-        'owner',
-        'reviewer1'
-      ],
-      groupB: []
+      groupA: ['owner', 'reviewer1'],
+      groupB: [],
     }
     const numberOfReviewers = 1
 
@@ -192,10 +175,7 @@ describe('chooseUsersFromGroups', () => {
     const owner = 'owner'
     const reviewers = {
       groupA: [],
-      groupB: [
-        'owner',
-        'reviewer1'
-      ]
+      groupB: ['owner', 'reviewer1'],
     }
     const numberOfReviewers = 2
 
@@ -212,7 +192,7 @@ describe('chooseUsersFromGroups', () => {
     const owner = 'owner'
     const reviewers = {
       groupA: [],
-      groupB: []
+      groupB: [],
     }
     const numberOfReviewers = 2
 
@@ -222,5 +202,88 @@ describe('chooseUsersFromGroups', () => {
     // THEN
     expect(list.length).toEqual(0)
     expect(list).toEqual([])
+  })
+})
+
+describe('chooseReviewers', () => {
+  test('returns separate reviewers and team_reviewers arrays', () => {
+    // GIVEN
+    const owner = 'pr-creator'
+    const config = {
+      addReviewers: true,
+      addAssignees: false,
+      reviewers: ['reviewer1', 'reviewer2', 'pr-creator'],
+      teamReviewers: ['team1', 'org/team2'],
+      assignees: [],
+      numberOfAssignees: 0,
+      numberOfReviewers: 0,
+      skipKeywords: [],
+      useReviewGroups: false,
+      useAssigneeGroups: false,
+      reviewGroups: {},
+      assigneeGroups: {},
+      skipUsers: [],
+    }
+
+    // WHEN
+    const result = chooseReviewers(owner, config)
+
+    // THEN
+    expect(result.reviewers).toEqual(['reviewer1', 'reviewer2'])
+    expect(result.team_reviewers).toEqual(['team1', 'org/team2'])
+  })
+
+  test('handles empty team_reviewers config', () => {
+    // GIVEN
+    const owner = 'pr-creator'
+    const config = {
+      addReviewers: true,
+      addAssignees: false,
+      reviewers: ['reviewer1'],
+      teamReviewers: [],
+      assignees: [],
+      numberOfAssignees: 0,
+      numberOfReviewers: 0,
+      skipKeywords: [],
+      useReviewGroups: false,
+      useAssigneeGroups: false,
+      reviewGroups: {},
+      assigneeGroups: {},
+      skipUsers: [],
+    }
+
+    // WHEN
+    const result = chooseReviewers(owner, config)
+
+    // THEN
+    expect(result.reviewers).toEqual(['reviewer1'])
+    expect(result.team_reviewers).toEqual([])
+  })
+
+  test('respects numberOfReviewers for individual reviewers', () => {
+    // GIVEN
+    const owner = 'pr-creator'
+    const config = {
+      addReviewers: true,
+      addAssignees: false,
+      reviewers: ['reviewer1', 'reviewer2', 'reviewer3'],
+      teamReviewers: ['team1', 'team2'],
+      assignees: [],
+      numberOfAssignees: 0,
+      numberOfReviewers: 1,
+      skipKeywords: [],
+      useReviewGroups: false,
+      useAssigneeGroups: false,
+      reviewGroups: {},
+      assigneeGroups: {},
+      skipUsers: [],
+    }
+
+    // WHEN
+    const result = chooseReviewers(owner, config)
+
+    // THEN
+    expect(result.reviewers).toHaveLength(1)
+    expect(result.team_reviewers).toEqual(['team1', 'team2']) // Team reviewers are not affected by numberOfReviewers
   })
 })
