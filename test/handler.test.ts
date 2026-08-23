@@ -142,7 +142,8 @@ describe('handlePullRequest', () => {
         addAssignees: false,
         addReviewers: true,
         numberOfReviewers: 0,
-        reviewers: ['/team_reviewer1'],
+        reviewers: [],
+        teamReviewers: ['team_reviewer1'],
         skipKeywords: ['wip'],
       }
     })
@@ -1007,5 +1008,74 @@ describe('handlePullRequest', () => {
     expect(spy.mock.calls[0][0]).toEqual('ignore for user pr-creator')
     expect(requestReviewersSpy).not.toBeCalled()
     expect(addAssigneesSpy).not.toBeCalled()
+  })
+
+  test('adds team reviewers from separate team_reviewers config', async () => {
+    // GIVEN
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addReviewers: true,
+        addAssignees: false,
+        reviewers: ['reviewer1', 'reviewer2'],
+        teamReviewers: ['team1', 'org/team2'],
+        numberOfReviewers: 0,
+      }
+    })
+
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any
+
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
+
+    // WHEN
+    await handlePullRequest(context)
+
+    // THEN
+    expect(requestReviewersSpy).toBeCalledTimes(1)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toEqual([
+      'reviewer1',
+      'reviewer2',
+    ])
+    expect(requestReviewersSpy.mock.calls[0][0]?.team_reviewers).toEqual([
+      'team1',
+      'org/team2',
+    ])
+  })
+
+  test('handles empty team_reviewers config gracefully', async () => {
+    // GIVEN
+    context.config = jest.fn().mockImplementation(async () => {
+      return {
+        addReviewers: true,
+        addAssignees: false,
+        reviewers: ['reviewer1'],
+        numberOfReviewers: 0,
+      }
+    })
+
+    context.octokit.pulls = {
+      requestReviewers: jest.fn().mockImplementation(async () => ({})),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any
+
+    const requestReviewersSpy = jest.spyOn(
+      context.octokit.pulls,
+      'requestReviewers'
+    )
+
+    // WHEN
+    await handlePullRequest(context)
+
+    // THEN
+    expect(requestReviewersSpy).toBeCalledTimes(1)
+    expect(requestReviewersSpy.mock.calls[0][0]?.reviewers).toEqual([
+      'reviewer1',
+    ])
+    expect(requestReviewersSpy.mock.calls[0][0]?.team_reviewers).toEqual([])
   })
 })

@@ -9,6 +9,7 @@ export interface Config {
   addReviewers: boolean
   addAssignees: boolean
   reviewers: string[]
+  teamReviewers: string[]
   assignees: string[]
   numberOfAssignees: number
   numberOfReviewers: number
